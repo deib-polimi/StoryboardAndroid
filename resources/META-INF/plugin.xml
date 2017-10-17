@@ -1,0 +1,46 @@
+<idea-plugin>
+  <id>com.nicolas.locatelli.plugin.id</id>
+  <name>Plugin Nicolas Locatelli</name>
+  <version>1.0</version>
+  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+
+  <description><![CDATA[
+      Enter short description for your plugin here.<br>
+      <em>most HTML tags may be used</em>
+    ]]></description>
+
+  <change-notes><![CDATA[
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>
+    ]]>
+  </change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="145.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <depends>com.intellij.modules.lang</depends>  <!--SOSTITUIRE CON: <depends>com.intellij.modules.androidstudio</depends>-->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+    <!--<action id="MyPlugin.MyAction" class="MyActionClass" text="My_Item"
+            description="action implemented by MyActionClass">
+      <add-to-group group-id="MainMenu" anchor="after" relative-to-action="WindowMenu"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt M"/>
+    </action> -->
+    <group id="MyPlugin.SampleMenu" text="_Sample Menu2" description="Sample menu" >
+      <add-to-group group-id="tasks.toolbar.group" anchor="last"  />
+      <action id="Myplugin.Textboxes" class="template.TextBoxes" text="Plugin" description="A test menu item" icon="/icons/erDiagram.png" />
+    </group>
+
+  </actions>
+
+</idea-plugin>

@@ -26,26 +26,11 @@ public class Main extends Application {
 
         SampleController sampleController = new SampleController();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
-        //loader.setController(sampleController);
         GridPane root = loader.load();
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        /*creo controller da codice: FUNZIONANTE
-        SampleController sampleController = new SampleController();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("template.sample.fxml"));
-        loader.setController(sampleController);
-        primaryStage.hide();
-        primaryStage.setScene(new Scene((GridPane) loader.load()));
-        primaryStage.show();*/
-
-
-        /*Originale
-        Parent root = FXMLLoader.load(getClass().getResource("template.sample.fxml"));
-
-        primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();*/
     }
 
 

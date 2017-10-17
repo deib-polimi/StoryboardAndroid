@@ -36,31 +36,12 @@ public class TextBoxes extends AnAction {
 
     public void actionPerformed(AnActionEvent event) {
 
-        /*PlatformImpl.startup(new Runnable() {
-            @Override
-            public void run() {
-                initialize();
-            }
-        });*/
-
-
-
-        //Project project = event.getData(PlatformDataKeys.PROJECT);
-        //String txt= Messages.showInputDialog(project, "What is your name?", "Input your name", Messages.getQuestionIcon());
-        //Messages.showMessageDialog(project, "Ciao, " + txt + "!\n I am glad to see you.", "Information", Messages.getInformationIcon());
+        /*Project project = event.getData(PlatformDataKeys.PROJECT);
+        String txt= Messages.showInputDialog(project, "What is your name?", "Input your name", Messages.getQuestionIcon());
+        Messages.showMessageDialog(project, "Ciao, " + txt + "!\n I am glad to see you.", "Information", Messages.getInformationIcon());*/
         Application.launch(Main.class, (java.lang.String[])null);
 
 
     }
-    /*private void initialize() {
-        try {
-            Main main = new Main();
-            if (stage == null) {
-                stage = new Stage();
-            }
-            main.start(stage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
+
 }

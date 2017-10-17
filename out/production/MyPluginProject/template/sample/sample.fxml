@@ -10,9 +10,12 @@
           xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="template.sample.SampleController"
 >
-    <Button text= "Say 'Hello World'" />
+    <Button text=
+                    "Say 'Hello World'" onAction=
+                    "#sayHelloWorld"/>
     <Label GridPane.rowIndex=
-                   "1" />
+                   "1" fx:id=
+                   "helloWorld"/>
 
 
 </GridPane>

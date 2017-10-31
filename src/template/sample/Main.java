@@ -3,19 +3,20 @@ package template.sample;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.ResourceBundle;
-
 public class Main extends Application {
+    @FXML
+    Label helloWorld;
+
+    @FXML
+    Button btn;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -24,8 +25,8 @@ public class Main extends Application {
 
         primaryStage.setTitle("Hello World");
 
-        SampleController sampleController = new SampleController();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
+        loader.setController(this);
         GridPane root = loader.load();
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
@@ -38,5 +39,19 @@ public class Main extends Application {
 
         launch(args);
     }
+
+    @FXML
+    public void initialize(){
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                helloWorld.setText("Hello World!");
+            }
+        });
+
+    }
+
+
+
 
 }

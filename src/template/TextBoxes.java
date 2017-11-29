@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Application;
+import javafx.embed.swing.JFXPanel;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
@@ -20,7 +21,6 @@ import com.sun.javafx.tk.*;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-
 
 public class TextBoxes extends AnAction {
     private Stage stage;
@@ -39,10 +39,26 @@ public class TextBoxes extends AnAction {
         /*Project project = event.getData(PlatformDataKeys.PROJECT);
         String txt= Messages.showInputDialog(project, "What is your name?", "Input your name", Messages.getQuestionIcon());
         Messages.showMessageDialog(project, "Ciao, " + txt + "!\n I am glad to see you.", "Information", Messages.getInformationIcon());*/
-        Application.launch(Main.class, (java.lang.String[])null);
+        //Application.launch(Main.class, (java.lang.String[])null);
+        PlatformImpl.startup(new Runnable() {
+            @Override
+            public void run() {
+                initialize();
+            }
+        });
 
+    }
 
-
+    private void initialize() {
+        try {
+            Main main = new Main();
+            if (stage == null) {
+                stage = new Stage();
+            }
+            main.start(stage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

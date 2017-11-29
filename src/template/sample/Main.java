@@ -8,29 +8,38 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-    @FXML
+    /*@FXML
     Label helloWorld;
 
     @FXML
-    Button btn;
+    Button btn;*/
 
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        //java.net.URL p = getClass().getResource("template.sample.fxml");
+        primaryStage.setTitle("My Plugin");
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root,1150,650);
+        scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+        primaryStage.setScene(scene);
+        primaryStage.show();
 
-        primaryStage.setTitle("Hello World");
+        root.setCenter(new RootLayout());
+
+        /*primaryStage.setTitle("Hello World");
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
         loader.setController(this);
+        loader.setClassLoader(getClass().getClassLoader()); //risolve problema "java.lang.IllegalStateException: Toolkit not initialized"
         GridPane root = loader.load();
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
-        primaryStage.show();
+        primaryStage.show();*/
 
     }
 
@@ -42,12 +51,12 @@ public class Main extends Application {
 
     @FXML
     public void initialize(){
-        btn.setOnAction(new EventHandler<ActionEvent>() {
+        /*btn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
                 helloWorld.setText("Hello World!");
             }
-        });
+        });*/
 
     }
 

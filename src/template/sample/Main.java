@@ -49,16 +49,16 @@ public class Main extends Application {
         launch(args);
     }
 
-    @FXML
+    /*@FXML
     public void initialize(){
-        /*btn.setOnAction(new EventHandler<ActionEvent>() {
+        btn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
                 helloWorld.setText("Hello World!");
             }
-        });*/
+        });
 
-    }
+    }*/
 
 
 

@@ -20,10 +20,7 @@
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
-  <depends>com.intellij.modules.lang</depends>  <!--SOSTITUIRE CON: <depends>com.intellij.modules.androidstudio</depends>-->
-  <!-- uncomment to enable plugin in all products
-  <depends>com.intellij.modules.lang</depends>
-  -->
+  <depends>com.intellij.modules.lang</depends> <!--SOSTITUIRE CON: <depends>com.intellij.modules.androidstudio</depends>-->
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
@@ -38,7 +35,7 @@
     </action> -->
     <group id="MyPlugin.SampleMenu" text="_Sample Menu2" description="Sample menu" >
       <add-to-group group-id="tasks.toolbar.group" anchor="last"  />
-      <action id="Myplugin.Textboxes" class="template.TextBoxes" text="Plugin" description="A test menu item" icon="/icons/erDiagram.png" />
+      <action id="Myplugin.Textboxes" class="template.TextBoxes" text="MyPlugin" description="A test menu item" icon="/icons/erDiagram.png" />
     </group>
 
   </actions>

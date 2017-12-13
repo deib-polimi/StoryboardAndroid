@@ -19,7 +19,6 @@ public class DragIcon extends AnchorPane {
 
     private DragControllerType mType;
 
-
     public DragIcon(){
 
         FXMLLoader fxmlLoader = new FXMLLoader(
@@ -79,6 +78,7 @@ public class DragIcon extends AnchorPane {
             default:
                 break;
         }
+
     }
 
     public void relocateToPoint (Point2D p) {

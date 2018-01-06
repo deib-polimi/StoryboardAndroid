@@ -1,18 +1,23 @@
 package template.sample;
 
 import com.sun.jna.platform.win32.WinDef;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.util.Callback;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 /**
  * Created by utente on 24/11/2017.
@@ -36,7 +41,6 @@ public class RootLayout extends AnchorPane{
     private EventHandler mIconDragOverGraphPane=null;
 
     TreeItem<String> rootItem = null;
-
 
     public RootLayout(){
 
@@ -84,23 +88,36 @@ public class RootLayout extends AnchorPane{
                 controllers_grid.add(icn,c,r);
             }
             c++;
+
+            structure_tree.setOnKeyPressed( new EventHandler<KeyEvent>()
+            {
+                @Override
+                public void handle( final KeyEvent keyEvent )
+                {
+                    final TreeItem<String> selectedItem = structure_tree.getSelectionModel().getSelectedItem();
+
+                    if ( selectedItem != null )
+                    {
+                        if ( keyEvent.getCode().equals( KeyCode.DELETE ) )
+                        {
+                            deleteTreeItem();
+                        }
+
+                        //... other keyevents
+                    }
+                }
+            } );
         }
 
         buildDragHandlers();
 
         rootItem = new TreeItem<>("Nome Progetto");
-        rootItem.setExpanded(true);
-        /*for (int i = 1; i < 6; i++) {
-            TreeItem<String> item = new TreeItem<String>("Message" + i);
-            rootItem.getChildren().add(item);
-        }*/
+        rootItem.setExpanded(true);  //root tree item looks expanded when the application starts
         structure_tree.setRoot(rootItem);
 
     }
 
     private void buildDragHandlers() {
-
-        final Point2D[] sceneCoord = {null};
 
         //drag over transition to move icon form controllers pane to graph pane
         mIconDragOverRoot = new EventHandler <DragEvent>() {
@@ -140,26 +157,24 @@ public class RootLayout extends AnchorPane{
             @Override
             public void handle(DragEvent event) {
 
-                sceneCoord[0] =new Point2D(event.getSceneX(), event.getSceneY());
-
-                //The DragContainer created in the DragDetected handler is retrieved from the event’s Dragboard.
-                //DragContainer container = (DragContainer) event.getDragboard().getContent(DragContainer.AddNode)
-
-                //The container is updated with the scene coordinates of the mouse cursor
-                //container.addData("scene_coords", new Point2D(event.getSceneX(), event.getSceneY()));
-
-                //ClipboardContent content = new ClipboardContent();
-                //content.put(DragContainer.AddNode, container);
-
-                //The event DragBoard’s content is replaced with the new ClipboardContent
-                // object containing the updated DragContainer data
-                //event.getDragboard().setContent(content);
-
                 //Aggiungo activity al resource tree
-                Dragboard db = event.getDragboard();
-                String type = db.getString();
+
+                ByteBuffer byteBuffer = (ByteBuffer) event.getDragboard().getContent(DragContainer.AddNode);
+                DragContainer container = deserialize(byteBuffer);
+                String type = container.getValue("type");
+                container.addData("scene_coords", new Point2D(event.getSceneX(), event.getSceneY()));
+
+                ClipboardContent content = new ClipboardContent();
+                content.put(DragContainer.AddNode, container);
+                event.getDragboard().setContent(content);
+
                 TreeItem<String> item = new TreeItem<String>(type);
                 rootItem.getChildren().add(item);
+
+                TreeItem<String> leaf = new TreeItem<String>("Intent");
+                item.getChildren().add(leaf);
+
+
                 event.setDropCompleted(true);
             }
         };
@@ -175,35 +190,73 @@ public class RootLayout extends AnchorPane{
 
                 mDragOverIcon.setVisible(false);
 
-                //DragContainer container = (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
-                Dragboard db = event.getDragboard();
-                String type = db.getString();
+                DragContainer container = (DragContainer)event.getDragboard().getContent(DragContainer.AddNode);
 
-                //if (container != null) {
-                if (type!=null){
+                if (container!=null){
                     //check if drop is inside the limits of graph pane
-                    //if (container.getValue("scene_coords") != null) {
-                    if (sceneCoord[0] != null){
+                    if (container.getValue("scene_coords") != null){
 
                         DraggableActivity activity = new DraggableActivity();
 
-                        //droppedIcon.setType(DragControllerType.valueOf(container.getValue("type")));
-                        activity.setType(DragControllerType.valueOf(type));
+                        activity.setType(DragControllerType.valueOf(container.getValue("type")));
                         graph_pane.getChildren().add(activity);
 
-                        //Point2D cursorPoint = container.getValue("scene_coords");
-
                         //Relocate the new DragIcon to center on the mouse cursor position
-                        /*droppedIcon.relocateToPoint(
-                                new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
-                        );*/
+                        Point2D cursorPoint = container.getValue("scene_coords");
                         activity.relocateToPoint(
-                                new Point2D(sceneCoord[0].getX()-19 , sceneCoord[0].getY()-19)
+                                new Point2D(cursorPoint.getX()-19 , cursorPoint.getY()-19)
                         );
                     }
                 }
+
+                //AddLink drag operation
+                try{
+                    container =(DragContainer) event.getDragboard().getContent(DragContainer.AddLink);
+                }catch (Exception e){
+                    System.out.println("Link non completato");
+                }
+
+
+                if (container != null) {
+
+                    //bind the ends of our link to the nodes whose id's are stored in the drag container
+                    String sourceId = container.getValue("source");
+                    String targetId = container.getValue("target");
+
+                    if (sourceId != null && targetId != null) {
+
+                        //System.out.println(container.getData());
+                        Link link = new Link();
+
+                        //add our link at the top of the rendering order so it's rendered first
+                        graph_pane.getChildren().add(0,link);
+
+                        DraggableActivity source = null;
+                        DraggableActivity target = null;
+
+                        for (Node n: graph_pane.getChildren()) {
+
+                            if (n.getId() == null)
+                                continue;
+
+                            if (n.getId().equals(sourceId))
+                                source = (DraggableActivity) n;
+
+                            if (n.getId().equals(targetId))
+                                target = (DraggableActivity) n;
+
+                        }
+
+                        if (source != null && target != null)
+                            link.bindEnds(source, target);
+                    }
+
+                }
+                if (container != null) {
+                    System.out.println(container.getData());
+                }
+
                 event.consume();
-                sceneCoord[0]=null;
             }
         });
     };
@@ -228,11 +281,10 @@ public class RootLayout extends AnchorPane{
                 mDragOverIcon.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
 
                 ClipboardContent content = new ClipboardContent();
-                /*DragContainer container = new DragContainer();
+                DragContainer container = new DragContainer();
 
                 container.addData ("type", mDragOverIcon.getType().toString());
-                content.put(DragContainer.AddNode, container);  //DataFormat, object*/
-                content.putString(mDragOverIcon.getType().toString());
+                content.put(DragContainer.AddNode, container);
 
                 mDragOverIcon.startDragAndDrop (TransferMode.ANY).setContent(content);
                 mDragOverIcon.setVisible(true);
@@ -241,4 +293,47 @@ public class RootLayout extends AnchorPane{
             }
         });
     }
+
+    public void treeItemMouseClick (MouseEvent mouseEvent){
+        TreeItem<String>item = structure_tree.getSelectionModel().getSelectedItem();
+        System.out.println(item.getValue());
+
+        //doppio click
+        //if (mouseEvent.getClickCount() == 2){}
+    }
+
+    public void deleteTreeItem(){
+        TreeItem<String> item = structure_tree.getSelectionModel().getSelectedItem();
+
+        if (item == null) {
+            return;
+        }
+
+        TreeItem<String> parent = item.getParent();
+
+        if (parent != null) {
+            parent.getChildren().remove(item);
+            ObservableList<Node> activityList = graph_pane.getChildren();
+            int length = activityList.size();
+            for (int i=0; i<length; i++){
+                DraggableActivity activity = (DraggableActivity) activityList.get(i);
+                if (item.getValue().equals(activity.getType().toString())){
+                    activity.delete();
+                }
+            }
+        }
+    }
+
+    public static DragContainer deserialize(ByteBuffer buffer) {
+        try {
+            ByteArrayInputStream is = new ByteArrayInputStream(buffer.array());
+            ObjectInputStream ois = new ObjectInputStream(is);
+            DragContainer obj = (DragContainer) ois.readObject();
+            return obj;
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }

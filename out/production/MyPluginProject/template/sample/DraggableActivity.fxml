@@ -29,7 +29,11 @@
                         <Label fx:id="title_label" text="Label" />
                     </children>
                 </GridPane>
-            <AnchorPane fx:id="body_pane" prefHeight="83.0" prefWidth="80.0" />
+            <AnchorPane fx:id="body_pane" prefHeight="83.0" prefWidth="80.0">
+               <children>
+                  <AnchorPane fx:id="left_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="83.0" prefWidth="20.0" styleClass="left-link-handle" AnchorPane.leftAnchor="0.0" />
+                  <AnchorPane fx:id="right_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="83.0" prefWidth="20.0" styleClass="right-link-handle" AnchorPane.rightAnchor="0.0" />
+               </children></AnchorPane>
             </children>
         </VBox>
     </children>

@@ -1,22 +1,29 @@
 package template.sample;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.nio.ByteBuffer;
+import java.util.UUID;
+
+import static template.sample.DragType.link;
 
 /**
  * Created by utente on 10/12/2017.
  */
 public class DraggableActivity extends AnchorPane{
+
+    private static final DataFormat customFormat = new DataFormat("s","t");
 
     @FXML
     public Label title_label;
@@ -31,12 +38,26 @@ public class DraggableActivity extends AnchorPane{
 
     private final DraggableActivity self;
 
+    //Link
+    @FXML AnchorPane left_link_handle;
+    @FXML AnchorPane right_link_handle;
+
+    private EventHandler <MouseEvent> mLinkHandleDragDetected;
+    private EventHandler <DragEvent> mLinkHandleDragDropped;
+    private EventHandler <DragEvent> mContextLinkDragOver;
+    private EventHandler <DragEvent> mContextLinkDragDropped;
+
+    private DragContainer container = new DragContainer();
+
+    private Link mDragLink = null;
+    private AnchorPane graph_pane = null;
+
     public DraggableActivity(){
 
         self = this;
 
         FXMLLoader fxmlLoader = new FXMLLoader(
-                getClass().getResource("DraggableActivity.fxml")
+                getClass().getResource("DraggableActivity2.fxml")
         );
 
         fxmlLoader.setRoot(this);
@@ -48,11 +69,33 @@ public class DraggableActivity extends AnchorPane{
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+        //provide a universally unique identifier for this object
+        setId(UUID.randomUUID().toString());
     }
 
     @FXML
     private void initialize() {
+
         buildNodeDragHandlers();
+        buildLinkDragHandlers();
+
+        left_link_handle.setOnDragDetected(mLinkHandleDragDetected);
+        right_link_handle.setOnDragDetected(mLinkHandleDragDetected);
+
+        left_link_handle.setOnDragDropped(mLinkHandleDragDropped);
+        right_link_handle.setOnDragDropped(mLinkHandleDragDropped);
+
+        mDragLink = new Link();
+        mDragLink.setVisible(false);
+
+        parentProperty().addListener(new ChangeListener() {
+
+            @Override
+            public void changed(ObservableValue observable,
+                                Object oldValue, Object newValue) {
+                graph_pane = (AnchorPane) getParent();
+            }
+        });
     }
 
     public DragControllerType getType() { return mType;}
@@ -64,7 +107,7 @@ public class DraggableActivity extends AnchorPane{
         getStyleClass().clear();
         getStyleClass().add("dragicon");
         getStyleClass().add("icon-red");
-        getStyleClass().add("node-overlay");
+        //getStyleClass().add("node-overlay");
         title_label.setText(mType.toString());
         /*switch (mType) {
 
@@ -110,6 +153,11 @@ public class DraggableActivity extends AnchorPane{
         );
     }
 
+    public void delete (){
+        AnchorPane parent  = (AnchorPane) self.getParent();
+        parent.getChildren().remove(self);
+    }
+
     public void buildNodeDragHandlers() {
 
         //drag detection for node dragging
@@ -132,12 +180,14 @@ public class DraggableActivity extends AnchorPane{
                 relocateToPoint (new Point2D(event.getSceneX(), event.getSceneY()));
 
                 ClipboardContent content = new ClipboardContent();
-                content.putString(mType.toString());
+                DragContainer container = new DragContainer();
+                container.addData ("type", mType.toString());
+                content.put(DragContainer.DragNode, container);
+
                 startDragAndDrop (TransferMode.ANY).setContent(content);
 
                 event.consume();
             }
-
         });
 
         mContextDragOver = new EventHandler <DragEvent> () {
@@ -169,5 +219,136 @@ public class DraggableActivity extends AnchorPane{
                 event.consume();
             }
         };
+    }
+
+    private void buildLinkDragHandlers() {
+
+        mLinkHandleDragDetected = new EventHandler <MouseEvent> () {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+                //clear the objects which provide the context for drag operation
+                getParent().setOnDragOver(null);
+                getParent().setOnDragDropped(null);
+
+                getParent().setOnDragOver(mContextLinkDragOver);
+                getParent().setOnDragDropped(mLinkHandleDragDropped);
+
+                //Set up user-draggable link
+                graph_pane.getChildren().add(0,mDragLink); //index 0 ensures the CubicCurve is rendered first,
+                                                                // preventing it from being drawn over existing DraggableActivity in the scene
+
+                mDragLink.setVisible(false);
+
+                //This point represents the (X,Y) coordinates of the center of the node in the graph AnchorPane’s coordinate space.
+                //This will serve as the starting point for our CubicCurve
+                Point2D p = new Point2D(
+                        getLayoutX() + (getWidth() / 2.0),
+                        getLayoutY() + (getHeight() / 2.0)
+                );
+
+                mDragLink.setStart(p);
+
+                //Drag content code
+                ClipboardContent content = new ClipboardContent();
+                DragContainer container = new DragContainer ();
+
+                AnchorPane link_handle = (AnchorPane) event.getSource();
+                //reference to the root AnchorPane of the DraggableActivity
+                DraggableActivity parent = (DraggableActivity) link_handle.getParent().getParent().getParent();
+
+                container.addData("source", getId());
+                content.put(DragContainer.AddLink, container);
+
+                parent.startDragAndDrop (TransferMode.ANY).setContent(content);
+
+                event.consume();
+            }
+        };
+
+        mLinkHandleDragDropped = new EventHandler <DragEvent> () {
+
+            @Override
+            public void handle(DragEvent event) {
+
+                getParent().setOnDragOver(null);
+                getParent().setOnDragDropped(null);
+
+                //get the drag data.  If it's null, abort.
+                //This isn't the drag event we're looking for.
+                ByteBuffer byteBuffer = (ByteBuffer)event.getDragboard().getContent(DragContainer.AddLink);
+                DragContainer container = deserialize(byteBuffer);
+
+                if (container == null)
+                    return;
+
+                //hide the draggable NodeLink and remove it from the right-hand AnchorPane's children
+                mDragLink.setVisible(false);
+                graph_pane.getChildren().remove(0);
+
+                AnchorPane link_handle = (AnchorPane) event.getSource();
+                DraggableActivity parent = (DraggableActivity) link_handle.getParent().getParent().getParent();
+
+                ClipboardContent content = new ClipboardContent();
+
+                container.addData("target", getId());
+
+                content.put(DragContainer.AddLink, container);
+
+                event.getDragboard().setContent(content);
+
+                event.setDropCompleted(true);
+
+                event.consume();
+                //container.clean();
+            }
+        };
+
+        mContextLinkDragOver = new EventHandler <DragEvent> () {
+
+            @Override
+            public void handle(DragEvent event) {
+                event.acceptTransferModes(TransferMode.ANY);
+
+                //Relocate user-draggable link
+                if (!mDragLink.isVisible())
+                    mDragLink.setVisible(true);
+
+                //end of our link always tracks with the mouse cursor
+                mDragLink.setEnd(new Point2D(event.getX(), event.getY()));
+
+                event.consume();
+
+            }
+        };
+
+        mContextLinkDragDropped = new EventHandler <DragEvent> () {
+
+            @Override
+            public void handle(DragEvent event) {
+
+                getParent().setOnDragOver(null);
+                getParent().setOnDragDropped(null);
+
+                //hide the draggable NodeLink and remove it from the right-hand AnchorPane's children
+                mDragLink.setVisible(false);
+                graph_pane.getChildren().remove(0);
+
+                event.setDropCompleted(true);
+                event.consume();
+            }
+        };
+    }
+
+    public static DragContainer deserialize(ByteBuffer buffer) {
+        try {
+            ByteArrayInputStream is = new ByteArrayInputStream(buffer.array());
+            ObjectInputStream ois = new ObjectInputStream(is);
+            DragContainer obj = (DragContainer) ois.readObject();
+            return obj;
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

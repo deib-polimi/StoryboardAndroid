@@ -2,11 +2,16 @@ package template.sample;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 
@@ -14,6 +19,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static template.sample.DragType.link;
@@ -41,23 +48,27 @@ public class DraggableActivity extends AnchorPane{
     //Link
     @FXML AnchorPane left_link_handle;
     @FXML AnchorPane right_link_handle;
+    @FXML AnchorPane body_pane;
 
     private EventHandler <MouseEvent> mLinkHandleDragDetected;
     private EventHandler <DragEvent> mLinkHandleDragDropped;
     private EventHandler <DragEvent> mContextLinkDragOver;
     private EventHandler <DragEvent> mContextLinkDragDropped;
 
-    private DragContainer container = new DragContainer();
-
     private Link mDragLink = null;
     private AnchorPane graph_pane = null;
+
+    private List<Link> anchoredLinks = new ArrayList<Link>();
+
+    ContextMenu contextMenu = new ContextMenu();
+
 
     public DraggableActivity(){
 
         self = this;
 
         FXMLLoader fxmlLoader = new FXMLLoader(
-                getClass().getResource("DraggableActivity2.fxml")
+                getClass().getResource("DraggableActivity.fxml")
         );
 
         fxmlLoader.setRoot(this);
@@ -84,6 +95,8 @@ public class DraggableActivity extends AnchorPane{
 
         left_link_handle.setOnDragDropped(mLinkHandleDragDropped);
         right_link_handle.setOnDragDropped(mLinkHandleDragDropped);
+        body_pane.setOnDragDropped(mLinkHandleDragDropped);
+
 
         mDragLink = new Link();
         mDragLink.setVisible(false);
@@ -96,6 +109,8 @@ public class DraggableActivity extends AnchorPane{
                 graph_pane = (AnchorPane) getParent();
             }
         });
+
+        //buildContextMenu();
     }
 
     public DragControllerType getType() { return mType;}
@@ -153,7 +168,17 @@ public class DraggableActivity extends AnchorPane{
         );
     }
 
+    //delete activity (and all anchored links) from the graph
     public void delete (){
+
+        //delete all anchored links
+        int size = anchoredLinks.size();
+        for (int i = 0; i<size; i++){
+            Link link = anchoredLinks.get(0);
+            anchoredLinks.remove(0);
+            link.delete();
+        }
+        //delete activity from graph
         AnchorPane parent  = (AnchorPane) self.getParent();
         parent.getChildren().remove(self);
     }
@@ -198,6 +223,14 @@ public class DraggableActivity extends AnchorPane{
 
                 event.acceptTransferModes(TransferMode.ANY);
                 relocateToPoint(new Point2D( event.getSceneX(), event.getSceneY()));
+                int size = anchoredLinks.size();
+                if (size>0){
+                    for(int i = 0; i<size; i++){
+                        anchoredLinks.get(i).updateArrow();
+                        anchoredLinks.get(i).updateIntents();
+                    }
+
+                }
 
                 event.consume();
             }
@@ -217,6 +250,7 @@ public class DraggableActivity extends AnchorPane{
                 event.setDropCompleted(true);
 
                 event.consume();
+
             }
         };
     }
@@ -293,15 +327,17 @@ public class DraggableActivity extends AnchorPane{
                 ClipboardContent content = new ClipboardContent();
 
                 container.addData("target", getId());
+                container.addData("drop_coords", new Point2D(event.getSceneX(), event.getSceneY()));
 
                 content.put(DragContainer.AddLink, container);
 
                 event.getDragboard().setContent(content);
+                //contextMenu.show(link_handle, event.getScreenX(), event.getScreenY());
 
                 event.setDropCompleted(true);
 
                 event.consume();
-                //container.clean();
+
             }
         };
 
@@ -351,4 +387,23 @@ public class DraggableActivity extends AnchorPane{
             throw new RuntimeException(e);
         }
     }
+
+    public void addAnchoredLink(Link link){
+        this.anchoredLinks.add(link);
+    }
+    public List<Link>getAnchoredLinks (){return anchoredLinks;}
+
+    public void deleteAnchoredLink(Link link){
+        boolean found = false;
+        int i = 0;
+        while (found == false && i<anchoredLinks.size()){
+            if (anchoredLinks.get(i).getId().equals(link.getId())){
+                anchoredLinks.remove(i);
+                found = true;
+            }
+            i++;
+        }
+    }
+
+
 }

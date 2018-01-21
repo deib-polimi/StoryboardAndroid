@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<fx:root fx:id="root_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="96.0" prefWidth="80.0" styleClass="dragicon" stylesheets="@application.css" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="root_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="110.0" styleClass="dragicon" stylesheets="@application.css" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
@@ -29,11 +29,16 @@
                         <Label fx:id="title_label" text="Label" />
                     </children>
                 </GridPane>
-            <AnchorPane fx:id="body_pane" prefHeight="83.0" prefWidth="80.0">
+            <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <AnchorPane fx:id="left_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="83.0" prefWidth="20.0" styleClass="left-link-handle" AnchorPane.leftAnchor="0.0" />
-                  <AnchorPane fx:id="right_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="83.0" prefWidth="20.0" styleClass="right-link-handle" AnchorPane.rightAnchor="0.0" />
-               </children></AnchorPane>
+                  <AnchorPane fx:id="left_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="101.0" prefWidth="20.0" styleClass="left-link-handle" />
+                  <AnchorPane fx:id="body_pane" prefHeight="100.0" prefWidth="85.0">
+                     <children>
+                        <Label fx:id="type_label" layoutX="26.0" layoutY="25.0" text="Label" />
+                     </children></AnchorPane>
+                  <AnchorPane fx:id="right_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="101.0" prefWidth="20.0" styleClass="right-link-handle" />
+               </children>
+            </HBox>
             </children>
         </VBox>
     </children>

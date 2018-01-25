@@ -1,6 +1,5 @@
 package template.sample;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -11,7 +10,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-
+import template.managers.AttributeInspectorManager;
+import template.managers.StructureTreeManager;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -31,6 +31,8 @@ public class RootLayout extends AnchorPane{
     private SplitPane base_pane;
     @FXML
     private TreeView<TreeItemParameter> structure_tree;
+    @FXML
+    private TextField item_name;
 
     private DragIcon mDragOverIcon = null;
 
@@ -38,7 +40,9 @@ public class RootLayout extends AnchorPane{
     private EventHandler mIconDragDropped=null;
     private EventHandler mIconDragOverGraphPane=null;
 
-    TreeItem<TreeItemParameter> rootItem = null;
+    private TreeItem<TreeItemParameter> rootItem = null;
+
+    private StructureTreeManager treeManager = null;
 
     public RootLayout(){
 
@@ -95,23 +99,32 @@ public class RootLayout extends AnchorPane{
                     final TreeItem<TreeItemParameter> selectedItem = structure_tree.getSelectionModel().getSelectedItem();
 
                     if ( selectedItem != null )
+                    //if(item!=null)
                     {
                         if ( keyEvent.getCode().equals( KeyCode.DELETE ) )
                         {
-                            deleteTreeItem();
+                            deleteItem();
+                            deselectAll();
                         }
 
-                        //... other keyevents
                     }
                 }
             } );
+
         }
+        //initialize attribute inspector
+        AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
+        inspectorManager.setTextField(item_name);
 
         buildDragHandlers();
 
         rootItem = new TreeItem<TreeItemParameter>(new TreeItemParameter("Nome Progetto","ROOT"));
         rootItem.setExpanded(true);  //root tree item looks expanded when the application starts
         structure_tree.setRoot(rootItem);
+        treeManager = StructureTreeManager.getInstance();
+        treeManager.setStructureTree(structure_tree);
+        treeManager.setRootItem(rootItem);
+        treeManager.setGraph(graph_pane);
 
     }
 
@@ -272,15 +285,31 @@ public class RootLayout extends AnchorPane{
     }
 
    public void treeItemMouseClick (MouseEvent mouseEvent){
-        TreeItem<TreeItemParameter> item = structure_tree.getSelectionModel().getSelectedItem();
-        //System.out.println(item.getValue());
-
-        //doppio click
-        //if (mouseEvent.getClickCount() == 2){}
+        //retrieve selected tree item
+       TreeItem<TreeItemParameter> item = structure_tree.getSelectionModel().getSelectedItem();
+       if (item!=null){
+           //retrieve corresponding item on the graph
+           Node selectedNode = searchById(item.getValue().getId());
+           //update attribute inspector ***
+           AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
+           if (selectedNode instanceof Link){
+               inspectorManager.setText("Link: "+selectedNode.getId());
+           }else if (selectedNode instanceof DraggableActivity){
+               inspectorManager.setText(((DraggableActivity)selectedNode).getType().toString());
+           }else if (selectedNode instanceof Intent){
+               inspectorManager.setText(((Intent)selectedNode).getType().toString());
+           }
+           //highlight (and store) the selected item
+           SelectedItem selectedItem = SelectedItem.getInstance();
+           selectedItem.setSelectedItem(selectedNode);
+       }
+       else {
+           deselectAll();
+       }
     }
 
     //delete selected tree item (and children) from tree and graph
-    public void deleteTreeItem(){
+    public void deleteItem(){
         TreeItem<TreeItemParameter> item = structure_tree.getSelectionModel().getSelectedItem();
 
         if (item == null || item.getValue().getId().equals("ROOT")) {
@@ -289,35 +318,19 @@ public class RootLayout extends AnchorPane{
             //when item is an intent: if there are other intents on the same link delete the item
             //else remove the entire link
             if ((searchById(item.getValue().getId()) instanceof Intent) && (item.getParent().getChildren().size()==1)){
-                deleteSubTree(item.getParent());
+                treeManager.deleteSubTree(item.getParent());
                 deleteNodeFromGraph(item.getParent().getValue().getId());
 
             }else{
-                deleteSubTree(item);
+                treeManager.deleteSubTree(item);
                 deleteNodeFromGraph(item.getValue().getId());
             }
 
         }
-        System.out.println(graph_pane.getChildren());
-
 
     }
 
-    //delete item and its children from tree
-    private void deleteSubTree(TreeItem<TreeItemParameter> root){
-        Node n = searchById(root.getValue().getId());
-        if (n instanceof DraggableActivity){
-            //if activity is target of any link, search that link in the tree and delete it
-            //this because in the tree links are children only of the source not the target
-            for(Link l : ((DraggableActivity) n).getAnchoredLinks()){
-                if (l.getTarget().getId().equals(root.getValue().getId())){
-                    TreeItem<TreeItemParameter> itemLink = searchTreeItemById(l.getId(),rootItem);
-                    boolean removed = itemLink.getParent().getChildren().remove(itemLink);
-                }
-            }
-        }
-        boolean removed = root.getParent().getChildren().remove(root);
-    }
+
 
     //delete node (activity, link, intent) from graph
     private void deleteNodeFromGraph(String id){
@@ -388,7 +401,7 @@ public class RootLayout extends AnchorPane{
                         Intent intent = new Intent(l.getCurve(),0f,20,intentType);
                         l.addIntent(intent);
                         graph_pane.getChildren().add(intent);
-                        addIntentToTree(l);
+                        treeManager.addIntentToTree(l);
                     }else{
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("OVERFLOW ERROR");
@@ -414,7 +427,7 @@ public class RootLayout extends AnchorPane{
                     //la posizione di arrow e icone intents quando sposto activity nel grafo
                     target.addAnchoredLink(link);
                     source.addAnchoredLink(link);
-                    addLinkToTree(link,source,target);
+                    treeManager.addLinkToTree(link,source,target);
 
                 }
             }
@@ -455,48 +468,6 @@ public class RootLayout extends AnchorPane{
         contextMenu.getItems().addAll(item1, item2,item3);
     }
 
-    private void addLinkToTree (Link link, DraggableActivity source,DraggableActivity target){
-       // boolean found = false;
-        //int i = 0;
-        TreeItem<TreeItemParameter> parentActivity = searchTreeItemById(source.getId(),rootItem);
-        //add link to tree (to source activity node)
-        TreeItem<TreeItemParameter> item = new TreeItem<TreeItemParameter>(new TreeItemParameter("Link to "+target.getType(),link.getId()));
-        parentActivity.getChildren().add(item);
-        int intentListSize = link.getIntentsList().size();
-        //add intent to parent link
-        Intent intent = link.getIntentsList().get(intentListSize-1); //ultimo intent aggiunto si trova in coda alla lista
-        TreeItem<TreeItemParameter> itemIntent = new TreeItem<TreeItemParameter>(new TreeItemParameter(intent.getType().toString(),intent.getId()));
-        item.getChildren().add(itemIntent);
-    }
-
-    private void addIntentToTree(Link link){
-        TreeItem<TreeItemParameter> parentLink = searchTreeItemById(link.getId(),rootItem);
-        int intentListSize = link.getIntentsList().size();
-        //add intent to parent link
-        Intent intent = link.getIntentsList().get(intentListSize-1); //ultimo intent aggiunto si trova in coda alla lista
-        TreeItem<TreeItemParameter> itemIntent = new TreeItem<TreeItemParameter>(new TreeItemParameter(intent.getType().toString(),intent.getId()));
-        parentLink.getChildren().add(itemIntent);
-    }
-
-    private TreeItem<TreeItemParameter> searchTreeItemById(String id,TreeItem<TreeItemParameter> searchRoot ){
-        TreeItem<TreeItemParameter> foundItem = null;
-        if (searchRoot != null){
-
-            if (searchRoot.getValue().getId().equals(id)){
-                return searchRoot;
-            }else{
-                for(TreeItem<TreeItemParameter> i : searchRoot.getChildren()){
-                    foundItem = searchTreeItemById(id,i);
-                    if (foundItem!=null)
-                        break;
-                }
-            }
-        }
-
-
-        return foundItem;
-    }
-
     private Node searchById (String id){
         Node node = null;
         for (Node n : graph_pane.getChildren()){
@@ -508,6 +479,25 @@ public class RootLayout extends AnchorPane{
         return node;
     }
 
+    public void clearSelections(MouseEvent mouseEvent){
+        Object clickedItem =mouseEvent.getTarget();
+        if (mouseEvent.getClickCount() == 2){
+            if (clickedItem == graph_pane){
+                deselectAll();
+            }
 
+        }
+    }
+    public void deselectAll(){
+        //clean attribute inspector
+        AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
+        inspectorManager.setText("");
+        //deselect item
+        SelectedItem selectedItem = SelectedItem.getInstance();
+        selectedItem.deselect();
+        //deselect tree item
+        StructureTreeManager treeManager = StructureTreeManager.getInstance();
+        treeManager.deselectAll();
+    }
 
 }

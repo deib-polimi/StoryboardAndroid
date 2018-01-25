@@ -1,14 +1,18 @@
 package template.sample;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.control.TreeItem;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
-import javafx.scene.transform.Rotate;
+import template.managers.AttributeInspectorManager;
+import template.managers.StructureTreeManager;
 
 import java.util.UUID;
 
@@ -36,6 +40,27 @@ public class Intent extends Circle{
         setStroke(Color.BLACK);
         update();
         setId(UUID.randomUUID().toString());
+
+        this.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() == 2){
+                    //update attribute inspector
+                    AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
+                    Intent i = (Intent) mouseEvent.getSource();
+                    inspectorManager.setText(i.getType().toString());
+                    //highlight and store selected item
+                    SelectedItem selectedItem = SelectedItem.getInstance();
+                    selectedItem.setSelectedItem(i);
+                    //select tree item
+                    StructureTreeManager treeManager = StructureTreeManager.getInstance();
+                    TreeItem<TreeItemParameter> item = treeManager.searchTreeItemById(getId(),treeManager.getRootItem());
+                    treeManager.selectTreeItem(item);
+                }
+
+            }
+        });
+
     }
 
     private Image setImage(IntentType type){
@@ -85,6 +110,7 @@ public class Intent extends Circle{
         update();
     }
 
+
     public Link getBelongingLink() {
         return belongingLink;
     }
@@ -102,9 +128,24 @@ public class Intent extends Circle{
         AnchorPane parent  = (AnchorPane) this.getParent();
         parent.getChildren().remove(this);
 
+    }
 
+    public void select(){
+        int depth = 20;
 
+        DropShadow borderGlow= new DropShadow();
+        borderGlow.setOffsetY(0f);
+        borderGlow.setOffsetX(0f);
+        borderGlow.setColor(Color.BLUE);
+        borderGlow.setWidth(depth);
+        borderGlow.setHeight(depth);
+        //borderGlow.setBlurType(BlurType.ONE_PASS_BOX);
+        borderGlow.setSpread(0.5);
 
+        this.setEffect(borderGlow);
+    }
+    public void deselect(){
+        this.setEffect(null);
     }
 
 

@@ -4,20 +4,18 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.When;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
-import javafx.scene.Cursor;
-import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
+import javafx.scene.control.TreeItem;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
-import javafx.scene.shape.StrokeType;
+import template.managers.AttributeInspectorManager;
+import template.managers.StructureTreeManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -150,6 +148,7 @@ public class Link extends AnchorPane {
                         mControlOffsetY.multiply(mControlDirectionY2)
                 )
         );
+
     }
 
     public void setStart(Point2D startPoint) {
@@ -367,5 +366,42 @@ public class Link extends AnchorPane {
 
     public CubicCurve getCurve() {
         return link;
+    }
+
+    public void mouseClickOnLink (MouseEvent mouseEvent){
+
+        //doppio click
+        if (mouseEvent.getClickCount() == 2){
+            //update attribute inspector
+            AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
+            inspectorManager.setText("Link: "+this.getId());
+            //highlight and store selected item
+            SelectedItem selectedItem = SelectedItem.getInstance();
+            selectedItem.setSelectedItem(this);
+            //select tree item
+            StructureTreeManager treeManager = StructureTreeManager.getInstance();
+            TreeItem<TreeItemParameter> item = treeManager.searchTreeItemById(getId(),treeManager.getRootItem());
+            treeManager.selectTreeItem(item);
+
+        }
+    }
+
+    public void select(){
+        int depth = 15;
+
+        DropShadow borderGlow= new DropShadow();
+        borderGlow.setOffsetY(0f);
+        borderGlow.setOffsetX(0f);
+        borderGlow.setColor(Color.BLUE);
+        borderGlow.setWidth(depth);
+        borderGlow.setHeight(depth);
+        //borderGlow.setBlurType(BlurType.THREE_PASS_BOX);
+        borderGlow.setSpread(0.5);
+
+        this.setEffect(borderGlow);
+    }
+
+    public void deselect(){
+        this.setEffect(null);
     }
 }

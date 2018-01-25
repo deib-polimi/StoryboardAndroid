@@ -2,18 +2,19 @@ package template.sample;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeItem;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import template.managers.AttributeInspectorManager;
+import template.managers.StructureTreeManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -22,8 +23,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static template.sample.DragType.link;
 
 /**
  * Created by utente on 10/12/2017.
@@ -82,6 +81,8 @@ public class DraggableActivity extends AnchorPane{
         }
         //provide a universally unique identifier for this object
         setId(UUID.randomUUID().toString());
+
+
     }
 
     @FXML
@@ -110,7 +111,6 @@ public class DraggableActivity extends AnchorPane{
             }
         });
 
-        //buildContextMenu();
     }
 
     public DragControllerType getType() { return mType;}
@@ -404,6 +404,44 @@ public class DraggableActivity extends AnchorPane{
             i++;
         }
     }
+
+    public void mouseClickOnActivityBody (MouseEvent mouseEvent){
+
+        //doppio click
+        if (mouseEvent.getClickCount() == 2){
+            //update attribute inspector
+            AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
+            inspectorManager.setText(this.getType().toString());
+            //highligh and store selected item
+            SelectedItem selectedItem = SelectedItem.getInstance();
+            selectedItem.setSelectedItem(this);
+            //select tree item
+            StructureTreeManager treeManager = StructureTreeManager.getInstance();
+            TreeItem<TreeItemParameter> item = treeManager.searchTreeItemById(getId(),treeManager.getRootItem());
+            treeManager.selectTreeItem(item);
+        }
+    }
+
+    public void select(){
+        int depth = 20;
+
+        DropShadow borderGlow= new DropShadow();
+        borderGlow.setOffsetY(0f);
+        borderGlow.setOffsetX(0f);
+        borderGlow.setColor(Color.BLUE);
+        borderGlow.setWidth(depth);
+        borderGlow.setHeight(depth);
+        //borderGlow.setBlurType(BlurType.ONE_PASS_BOX);
+        borderGlow.setSpread(0.5);
+
+        this.setEffect(borderGlow);
+    }
+
+    public void deselect(){
+        this.setEffect(null);
+    }
+
+
 
 
 }

@@ -227,7 +227,14 @@ public class Link extends AnchorPane {
                 .otherwise(new When(source.layoutXProperty().greaterThan(target.layoutXProperty().add(target.getWidth()))).then(0).otherwise(0.5)));
 
         mLinkAnchorYSource.bind(new When(target.layoutYProperty().greaterThan(source.layoutYProperty().add(H))).then(1)
-                .otherwise(new When(source.layoutYProperty().greaterThan(target.layoutYProperty().add(H))).then(0).otherwise(0.5)));
+                .otherwise(new When(source.layoutYProperty().greaterThan(target.layoutYProperty().add(H))).then(0)
+                        .otherwise(new When((source.layoutYProperty().greaterThan(target.layoutYProperty().add(target.getHeight())))
+                                .and(((target.layoutXProperty().greaterThan(source.layoutXProperty())).and(target.layoutXProperty().lessThan(source.layoutXProperty().add(source.getWidth()))))
+                                        .or((((target.layoutXProperty().add(target.getWidth())).greaterThan(source.layoutXProperty())).and(target.layoutXProperty().lessThan(source.layoutXProperty().add(source.getWidth()))))))).then(0)
+                                .otherwise(new When((target.layoutYProperty().greaterThan(source.layoutYProperty().add(target.getHeight())))
+                                        .and(((target.layoutXProperty().greaterThan(source.layoutXProperty())).and(target.layoutXProperty().lessThan(source.layoutXProperty().add(source.getWidth()))))
+                                                .or((((target.layoutXProperty().add(target.getWidth())).greaterThan(source.layoutXProperty())).and(target.layoutXProperty().lessThan(source.layoutXProperty().add(source.getWidth()))))))).then(1)
+                                        .otherwise(0.5)))));
 
         /*mLinkAnchorXTarget.bind(new When((source.layoutXProperty().greaterThan(target.layoutXProperty().add(w)))
                 .and(source.layoutXProperty().lessThan(target.layoutXProperty().add(W)))
@@ -240,7 +247,14 @@ public class Link extends AnchorPane {
                 .otherwise(new When(source.layoutXProperty().greaterThan(target.layoutXProperty().add(target.getWidth()))).then(1).otherwise(0.5)));
 
         mLinkAnchorYTarget.bind(new When(target.layoutYProperty().greaterThan(source.layoutYProperty().add(H))).then(0)
-                .otherwise(new When(source.layoutYProperty().greaterThan(target.layoutYProperty().add(H))).then(1).otherwise(0.5)));
+                .otherwise(new When(source.layoutYProperty().greaterThan(target.layoutYProperty().add(H))).then(1)
+                        .otherwise(new When((target.layoutYProperty().greaterThan(source.layoutYProperty().add(source.getHeight())))
+                                .and(((source.layoutXProperty().greaterThan(target.layoutXProperty())).and(source.layoutXProperty().lessThan(target.layoutXProperty().add(target.getWidth()))))
+                                        .or((((source.layoutXProperty().add(source.getWidth())).greaterThan(target.layoutXProperty())).and(source.layoutXProperty().lessThan(target.layoutXProperty().add(target.getWidth()))))))).then(0)
+                                .otherwise(new When((source.layoutYProperty().greaterThan(target.layoutYProperty().add(source.getHeight())))
+                                        .and(((source.layoutXProperty().greaterThan(target.layoutXProperty())).and(source.layoutXProperty().lessThan(target.layoutXProperty().add(target.getWidth()))))
+                                                .or((((source.layoutXProperty().add(source.getWidth())).greaterThan(target.layoutXProperty())).and(source.layoutXProperty().lessThan(target.layoutXProperty().add(target.getWidth()))))))).then(1)
+                                        .otherwise(0.5)))));
 
         link.startXProperty().bind(source.layoutXProperty().add(Bindings.multiply(mLinkAnchorXSource,source.getWidth())));
         link.startYProperty().bind(source.layoutYProperty().add(Bindings.multiply(mLinkAnchorYSource,source.getHeight())));
@@ -281,6 +295,10 @@ public class Link extends AnchorPane {
         intentsList.add(intent);
         intent.setBelongingLink(this);
         intentsRepositioning();
+        SelectedItem selectedItem = SelectedItem.getInstance();
+        if(selectedItem.getSelectedItem()==this){
+            intent.select();
+        }
         updateIntents();
     }
 
@@ -399,9 +417,17 @@ public class Link extends AnchorPane {
         borderGlow.setSpread(0.5);
 
         this.setEffect(borderGlow);
+        //highlight associated intents
+        for (Intent i : intentsList){
+            i.select();
+        }
     }
 
     public void deselect(){
+
         this.setEffect(null);
+        for (Intent i : intentsList) {
+            i.deselect();
+        }
     }
 }

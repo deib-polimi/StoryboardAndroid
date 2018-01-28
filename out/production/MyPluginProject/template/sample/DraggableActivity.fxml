@@ -12,7 +12,7 @@
     <children>
         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <GridPane fx:id="header_bar" styleClass="node-overlay">
+                <GridPane fx:id="header_bar">
                     <columnConstraints>
                         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
                         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="25.0" />
@@ -21,12 +21,12 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Label fx:id="close_button" alignment="TOP_RIGHT" text="X" textAlignment="RIGHT" GridPane.columnIndex="1">
+                        <Label fx:id="close_button" alignment="TOP_RIGHT" textAlignment="RIGHT" GridPane.columnIndex="1">
                             <padding>
                                 <Insets right="10.0" />
                             </padding>
                         </Label>
-                        <Label fx:id="title_label" text="Label" />
+                        <Label fx:id="title_label" styleClass="title-label" text="Label" />
                     </children>
                 </GridPane>
             <HBox prefHeight="100.0" prefWidth="200.0">
@@ -34,7 +34,7 @@
                   <AnchorPane fx:id="left_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="101.0" prefWidth="20.0" styleClass="left-link-handle" />
                   <AnchorPane fx:id="body_pane" onMouseClicked="#mouseClickOnActivityBody" prefHeight="100.0" prefWidth="85.0">
                      <children>
-                        <Label fx:id="type_label" layoutX="26.0" layoutY="25.0" text="Label" />
+                        <Label fx:id="type_label" layoutX="10.0" layoutY="25.0" styleClass="activity-type-label" text="Label" />
                      </children></AnchorPane>
                   <AnchorPane fx:id="right_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="101.0" prefWidth="20.0" styleClass="right-link-handle" />
                </children>

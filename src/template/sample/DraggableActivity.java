@@ -12,6 +12,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import template.managers.AttributeInspectorManager;
 import template.managers.StructureTreeManager;
@@ -32,8 +33,11 @@ public class DraggableActivity extends AnchorPane{
     private static final DataFormat customFormat = new DataFormat("s","t");
 
     @FXML
-    public Label title_label;
-    @FXML AnchorPane root_pane;
+    private Label title_label;
+    @FXML
+    private AnchorPane root_pane;
+    @FXML
+    private GridPane header_bar;
 
     private DragControllerType mType = null;
 
@@ -121,29 +125,37 @@ public class DraggableActivity extends AnchorPane{
 
         getStyleClass().clear();
         getStyleClass().add("dragicon");
-        getStyleClass().add("icon-red");
+        getStyleClass().add("node-bg-teal");
+        header_bar.getStyleClass().add("node-overlay-teal");
+
         //getStyleClass().add("node-overlay");
         title_label.setText(mType.toString());
         /*switch (mType) {
 
             case gridView:
+                getStyleClass().add("node-bg-teal");
+                header_bar.getStyleClass().add("node-overlay-teal");
 
                 break;
 
             case listView:
-
+                getStyleClass().add("node-bg-grey");
+                header_bar.getStyleClass().add("node-overlay-grey");
                 break;
 
             case plus:
-
+                getStyleClass().add("node-bg-cyan");
+                header_bar.getStyleClass().add("node-overlay-cyan");
                 break;
 
             case emptyActivity:
-
+                getStyleClass().add("node-bg-blue");
+                header_bar.getStyleClass().add("node-overlay-blue");
                 break;
 
             case loginActivity:
-
+                getStyleClass().add("node-bg-pesto");
+                header_bar.getStyleClass().add("node-overlay-pesto");
                 break;
 
             case tabBar:
@@ -423,7 +435,7 @@ public class DraggableActivity extends AnchorPane{
     }
 
     public void select(){
-        int depth = 20;
+        int depth = 30;
 
         DropShadow borderGlow= new DropShadow();
         borderGlow.setOffsetY(0f);
@@ -435,6 +447,7 @@ public class DraggableActivity extends AnchorPane{
         borderGlow.setSpread(0.5);
 
         this.setEffect(borderGlow);
+
     }
 
     public void deselect(){

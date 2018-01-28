@@ -48,7 +48,7 @@ public class DragIcon extends AnchorPane {
 
         getStyleClass().clear();
         getStyleClass().add("dragicon");
-        getStyleClass().add("icon-red");
+        getStyleClass().add("icon-green");
         switch (mType) {
 
             case gridView:

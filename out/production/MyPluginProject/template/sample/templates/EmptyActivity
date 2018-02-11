@@ -1,0 +1,19 @@
+package ${PACKAGE};
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+${IMPORTS}
+
+public class ${ACTIVITY_NAME} extends AppCompatActivity {
+
+    ${DECLARATIONS}
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity${ACTIVITY_LAYOUT});
+
+        ${SET_VIEWS}
+        ${BUTTON_CLICK_INTENT}
+    }
+}

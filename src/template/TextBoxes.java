@@ -5,11 +5,13 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Application;
 import javafx.embed.swing.JFXPanel;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.jetbrains.jps.cmdline.Launcher;
@@ -40,12 +42,15 @@ public class TextBoxes extends AnAction {
         String txt= Messages.showInputDialog(project, "What is your name?", "Input your name", Messages.getQuestionIcon());
         Messages.showMessageDialog(project, "Ciao, " + txt + "!\n I am glad to see you.", "Information", Messages.getInformationIcon());*/
         //Application.launch(Main.class, (java.lang.String[])null);
+        ProjectHandler projectHandler = ProjectHandler.getInstance();
+        projectHandler.setEvent(event);
         PlatformImpl.startup(new Runnable() {
             @Override
             public void run() {
                 initialize();
             }
         });
+
 
     }
 

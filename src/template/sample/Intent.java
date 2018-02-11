@@ -11,9 +11,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
+import template.attributeInspector.ButtonClickIntentAttributes;
 import template.managers.AttributeInspectorManager;
 import template.managers.StructureTreeManager;
 
+import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -26,10 +28,9 @@ public class Intent extends Circle{
     private Image img;
     private IntentType type;
     private Link belongingLink;
+    private String name;
 
-
-
-    public Intent(CubicCurve curve, float t, double radius, IntentType type ) {
+    public Intent(CubicCurve curve, float t, double radius, IntentType type ) throws IOException {
 
         super(radius);
         this.curve = curve;
@@ -45,10 +46,9 @@ public class Intent extends Circle{
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 2){
-                    //update attribute inspector
-                    AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
                     Intent i = (Intent) mouseEvent.getSource();
-                    inspectorManager.setText(i.getType().toString());
+                    //update attribute inspector
+                    fillAttributeInspector();
                     //highlight and store selected item
                     SelectedItem selectedItem = SelectedItem.getInstance();
                     selectedItem.setSelectedItem(i);
@@ -57,7 +57,6 @@ public class Intent extends Circle{
                     TreeItem<TreeItemParameter> item = treeManager.searchTreeItemById(getId(),treeManager.getRootItem());
                     treeManager.selectTreeItem(item);
                 }
-
             }
         });
 
@@ -110,6 +109,18 @@ public class Intent extends Circle{
         update();
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void updateName(String name){
+        setName(name);
+        StructureTreeManager treeManager = StructureTreeManager.getInstance();
+        treeManager.updateIntentName(name,getId());
+    }
+    public String getName() {
+        return name;
+    }
+
 
     public Link getBelongingLink() {
         return belongingLink;
@@ -148,5 +159,9 @@ public class Intent extends Circle{
         this.setEffect(null);
     }
 
+
+    public void fillAttributeInspector(){}
+    public void loadAttributeInspector(){}
+    public ButtonClickIntentAttributes getIntentInspector (){return null;}
 
 }

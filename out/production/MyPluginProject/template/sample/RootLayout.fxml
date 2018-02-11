@@ -32,10 +32,13 @@
                   </GridPane>
               </items>
             </SplitPane>
-            <AnchorPane fx:id="graph_pane" onMouseClicked="#clearSelections" prefHeight="200.0" prefWidth="200.0" />
-            <AnchorPane fx:id="attribute_inspector" maxWidth="-Infinity" prefHeight="200.0" prefWidth="250.0">
+            <AnchorPane fx:id="graph_pane" onMouseClicked="#clearSelections" prefHeight="200.0" prefWidth="200.0">
                <children>
-                  <TextField fx:id="item_name" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="50.0" />
+                  <Button fx:id="generate_button" mnemonicParsing="false" onAction="#generateCode" text="Generate Code" />
+               </children></AnchorPane>
+            <AnchorPane fx:id="attribute_inspector_pane" maxWidth="-Infinity" prefHeight="200.0" prefWidth="250.0">
+               <children>
+                  <TabPane fx:id="attribute_inspector" prefHeight="548.0" prefWidth="250.0" tabClosingPolicy="UNAVAILABLE" />
                </children></AnchorPane>
          </items>
       </SplitPane>

@@ -1,5 +1,6 @@
 package template.sample;
 
+import javafx.beans.DefaultProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -29,8 +30,6 @@ import java.util.UUID;
  * Created by utente on 10/12/2017.
  */
 public class DraggableActivity extends AnchorPane{
-
-    private static final DataFormat customFormat = new DataFormat("s","t");
 
     @FXML
     private Label title_label;
@@ -65,12 +64,11 @@ public class DraggableActivity extends AnchorPane{
 
     ContextMenu contextMenu = new ContextMenu();
 
-
     public DraggableActivity(){
 
         self = this;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(
+        /*FXMLLoader fxmlLoader = new FXMLLoader(
                 getClass().getResource("DraggableActivity.fxml")
         );
 
@@ -82,15 +80,14 @@ public class DraggableActivity extends AnchorPane{
 
         } catch (IOException exception) {
             throw new RuntimeException(exception);
-        }
+        }*/
         //provide a universally unique identifier for this object
         setId(UUID.randomUUID().toString());
 
 
     }
 
-    @FXML
-    private void initialize() {
+    public void init() {
 
         buildNodeDragHandlers();
         buildLinkDragHandlers();
@@ -114,6 +111,10 @@ public class DraggableActivity extends AnchorPane{
                 graph_pane = (AnchorPane) getParent();
             }
         });
+        //if it is the first activity set it as initial activity
+        if(StructureTreeManager.getInstance().getRootItem().getChildren().size()==0){
+            IsInitialActivity.getInstance().setInitialActivity(this);
+        }
 
     }
 
@@ -129,7 +130,6 @@ public class DraggableActivity extends AnchorPane{
         header_bar.getStyleClass().add("node-overlay-teal");
 
         //getStyleClass().add("node-overlay");
-        title_label.setText(mType.toString());
         /*switch (mType) {
 
             case gridView:
@@ -148,7 +148,7 @@ public class DraggableActivity extends AnchorPane{
                 header_bar.getStyleClass().add("node-overlay-cyan");
                 break;
 
-            case emptyActivity:
+            case EmptyActivity:
                 getStyleClass().add("node-bg-blue");
                 header_bar.getStyleClass().add("node-overlay-blue");
                 break;
@@ -189,6 +189,10 @@ public class DraggableActivity extends AnchorPane{
             Link link = anchoredLinks.get(0);
             anchoredLinks.remove(0);
             link.delete();
+        }
+        //if it is initial activity deselect initial activity
+        if(IsInitialActivity.getInstance().getInitialActivity() == this){
+            IsInitialActivity.getInstance().deselectInitialActivity();
         }
         //delete activity from graph
         AnchorPane parent  = (AnchorPane) self.getParent();
@@ -400,6 +404,19 @@ public class DraggableActivity extends AnchorPane{
         }
     }
 
+    public String getName() {
+        return title_label.getText();
+    }
+
+    public void setName(String name) {
+        title_label.setText(name);
+    }
+    public void updateName(String name){
+        setName(name);
+        StructureTreeManager treeManager = StructureTreeManager.getInstance();
+        treeManager.updateActivityName(name,getId());
+    }
+
     public void addAnchoredLink(Link link){
         this.anchoredLinks.add(link);
     }
@@ -421,9 +438,9 @@ public class DraggableActivity extends AnchorPane{
 
         //doppio click
         if (mouseEvent.getClickCount() == 2){
-            //update attribute inspector
-            AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
-            inspectorManager.setText(this.getType().toString());
+            //load attribute inspector
+            loadInspector();
+
             //highligh and store selected item
             SelectedItem selectedItem = SelectedItem.getInstance();
             selectedItem.setSelectedItem(this);
@@ -433,6 +450,8 @@ public class DraggableActivity extends AnchorPane{
             treeManager.selectTreeItem(item);
         }
     }
+
+    public void loadInspector(){}
 
     public void select(){
         int depth = 30;
@@ -453,6 +472,54 @@ public class DraggableActivity extends AnchorPane{
     public void deselect(){
         this.setEffect(null);
     }
+
+    public  List<Intent> getIntents(){
+        List<Intent> intentList = new ArrayList<Intent>();
+        for(Link l : anchoredLinks){
+            for(Intent i: l.getIntentsList()){
+                intentList.add(i);
+            }
+        }
+        return intentList;
+    }
+
+    public List<Link> getOutgoingLinks(){
+        List<Link> outgoingLinks = new ArrayList<Link>();
+        for(Link l: getAnchoredLinks()){
+            if(l.getSource() == this){
+                outgoingLinks.add(l);
+            }
+        }
+        return outgoingLinks;
+    }
+
+    public List<Intent> getOutgoingIntents(){
+        List<Intent> intentList = new ArrayList<Intent>();
+        for(Link l: getOutgoingLinks()){
+            for(Intent i: l.getIntentsList()){
+                intentList.add(i);
+            }
+        }
+        return intentList;
+    }
+
+    public List<Intent> getOutgoingIntentsForType(IntentType type){
+        List<Intent> intentList = new ArrayList<Intent>();
+        for(Link l: getOutgoingLinks()){
+            for(Intent i: l.getIntentsList()){
+                if(i.getType() == type){
+                    intentList.add(i);
+                }
+
+            }
+        }
+        return intentList;
+    }
+
+    public void isInitialActivity(boolean isInitial){}
+    public String createJavaCode(){return null;}
+    public String createXMLCode(){return null;}
+    public String getManifest() throws IOException {return null;}
 
 
 

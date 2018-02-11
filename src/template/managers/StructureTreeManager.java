@@ -9,6 +9,9 @@ import template.sample.Intent;
 import template.sample.Link;
 import template.sample.TreeItemParameter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by utente on 24/01/2018.
  */
@@ -69,12 +72,12 @@ public class StructureTreeManager {
 
         TreeItem<TreeItemParameter> parentActivity = searchTreeItemById(source.getId(),rootItem);
         //add link to tree (to source activity node)
-        TreeItem<TreeItemParameter> item = new TreeItem<TreeItemParameter>(new TreeItemParameter("Link to "+target.getType(),link.getId()));
+        TreeItem<TreeItemParameter> item = new TreeItem<TreeItemParameter>(new TreeItemParameter("Link to "+target.getName(),link.getId()));
         parentActivity.getChildren().add(item);
         int intentListSize = link.getIntentsList().size();
         //add intent to parent link
         Intent intent = link.getIntentsList().get(intentListSize-1); //ultimo intent aggiunto si trova in coda alla lista
-        TreeItem<TreeItemParameter> itemIntent = new TreeItem<TreeItemParameter>(new TreeItemParameter(intent.getType().toString(),intent.getId()));
+        TreeItem<TreeItemParameter> itemIntent = new TreeItem<TreeItemParameter>(new TreeItemParameter(intent.getName(),intent.getId()));
         item.getChildren().add(itemIntent);
     }
 
@@ -83,7 +86,7 @@ public class StructureTreeManager {
         int intentListSize = link.getIntentsList().size();
         //add intent to parent link
         Intent intent = link.getIntentsList().get(intentListSize-1); //ultimo intent aggiunto si trova in coda alla lista
-        TreeItem<TreeItemParameter> itemIntent = new TreeItem<TreeItemParameter>(new TreeItemParameter(intent.getType().toString(),intent.getId()));
+        TreeItem<TreeItemParameter> itemIntent = new TreeItem<TreeItemParameter>(new TreeItemParameter(intent.getName(),intent.getId()));
         parentLink.getChildren().add(itemIntent);
     }
 
@@ -106,7 +109,7 @@ public class StructureTreeManager {
         return foundItem;
     }
 
-    private Node searchById (String id){
+    public Node searchById (String id){
         Node node = null;
         for (Node n : graph.getChildren()){
             if (n.getId().equals(id)){
@@ -123,6 +126,22 @@ public class StructureTreeManager {
 
     public void deselectAll(){
         structureTree.getSelectionModel().select(null);
+    }
+
+    public void updateActivityName(String newName,String id){
+        searchTreeItemById(id,rootItem).setValue(new TreeItemParameter(newName,id));
+    }
+    public void updateIntentName(String newName,String id){
+        searchTreeItemById(id,rootItem).setValue(new TreeItemParameter(newName,id));
+    }
+
+    public List<DraggableActivity> getActivitiesFromTree(){
+        List<DraggableActivity> activities = new ArrayList<DraggableActivity>();
+        for(TreeItem<TreeItemParameter> item : rootItem.getChildren()){
+            DraggableActivity activity = (DraggableActivity) searchById(item.getValue().getId());
+            activities.add(activity);
+        }
+        return activities;
     }
 
 

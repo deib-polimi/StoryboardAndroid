@@ -392,7 +392,7 @@ public class Link extends AnchorPane {
         if (mouseEvent.getClickCount() == 2){
             //update attribute inspector
             AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
-            inspectorManager.setText("Link: "+this.getId());
+            inspectorManager.loadLinkInspector(this);
             //highlight and store selected item
             SelectedItem selectedItem = SelectedItem.getInstance();
             selectedItem.setSelectedItem(this);

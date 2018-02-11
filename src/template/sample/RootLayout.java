@@ -1,5 +1,7 @@
 package template.sample;
 
+import com.google.common.io.Resources;
+import com.intellij.openapi.project.ProjectManager;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -7,15 +9,22 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.shape.CubicCurve;
+import template.ProjectHandler;
 import template.managers.AttributeInspectorManager;
 import template.managers.StructureTreeManager;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+
+import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.intellij.openapi.actionSystem.AnAction.getEventProject;
 
 /**
  * Created by utente on 24/11/2017.
@@ -32,7 +41,9 @@ public class RootLayout extends AnchorPane{
     @FXML
     private TreeView<TreeItemParameter> structure_tree;
     @FXML
-    private TextField item_name;
+    private Button generate_button;
+    @FXML
+    private TabPane attribute_inspector;
 
     private DragIcon mDragOverIcon = null;
 
@@ -114,18 +125,17 @@ public class RootLayout extends AnchorPane{
         }
         //initialize attribute inspector
         AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
-        inspectorManager.setTextField(item_name);
+        inspectorManager.setAttributeInspector(attribute_inspector);
 
         buildDragHandlers();
 
-        rootItem = new TreeItem<TreeItemParameter>(new TreeItemParameter("Nome Progetto","ROOT"));
+        rootItem = new TreeItem<TreeItemParameter>(new TreeItemParameter(ProjectHandler.getInstance().getProjectName(),"ROOT"));
         rootItem.setExpanded(true);  //root tree item looks expanded when the application starts
         structure_tree.setRoot(rootItem);
         treeManager = StructureTreeManager.getInstance();
         treeManager.setStructureTree(structure_tree);
         treeManager.setRootItem(rootItem);
         treeManager.setGraph(graph_pane);
-
     }
 
     private void buildDragHandlers() {
@@ -206,9 +216,17 @@ public class RootLayout extends AnchorPane{
                     //check if drop is inside the limits of graph pane
                     if (container.getValue("scene_coords") != null){
 
-                        DraggableActivity activity = new DraggableActivity();
+                        //DraggableActivity activity = new DraggableActivity();
+                        EmptyActivity activity = null;
+                        try {
+                            activity = new EmptyActivity();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
                         activity.setType(DragControllerType.valueOf(container.getValue("type")));
+                        deselectAll();
+
                         graph_pane.getChildren().add(activity);
 
                         //Relocate the new DragIcon to center on the mouse cursor position
@@ -217,8 +235,9 @@ public class RootLayout extends AnchorPane{
                                 new Point2D(cursorPoint.getX()-19 , cursorPoint.getY()-19)
                         );
 
-                        TreeItem<TreeItemParameter> item = new TreeItem<TreeItemParameter>(new TreeItemParameter(activity.getType().toString(),activity.getId()));
+                        TreeItem<TreeItemParameter> item = new TreeItem<TreeItemParameter>(new TreeItemParameter(activity.getName(),activity.getId()));
                         rootItem.getChildren().add(item);
+
                     }
                 }
 
@@ -290,15 +309,6 @@ public class RootLayout extends AnchorPane{
        if (item!=null){
            //retrieve corresponding item on the graph
            Node selectedNode = searchById(item.getValue().getId());
-           //update attribute inspector ***
-           AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
-           if (selectedNode instanceof Link){
-               inspectorManager.setText("Link: "+selectedNode.getId());
-           }else if (selectedNode instanceof DraggableActivity){
-               inspectorManager.setText(((DraggableActivity)selectedNode).getType().toString());
-           }else if (selectedNode instanceof Intent){
-               inspectorManager.setText(((Intent)selectedNode).getType().toString());
-           }
            //highlight (and store) the selected item
            SelectedItem selectedItem = SelectedItem.getInstance();
            selectedItem.setSelectedItem(selectedNode);
@@ -327,6 +337,7 @@ public class RootLayout extends AnchorPane{
             }
 
         }
+        AttributeInspectorManager.getInstance().replaceInspectorAfterDelete();
 
     }
 
@@ -368,7 +379,7 @@ public class RootLayout extends AnchorPane{
         return null;
     }
 
-    private void createLink(DragContainer container,IntentType intentType){
+    private void createLink(DragContainer container,IntentType intentType) throws IOException {
         //bind the ends of our link to the nodes whose id's are stored in the drag container
         String sourceId = container.getValue("source");
         String targetId = container.getValue("target");
@@ -398,10 +409,13 @@ public class RootLayout extends AnchorPane{
                 if (l!= null){
                     //controllo che il limite massimo di intent per link (5) non sia stato raggiunto
                     if(l.getIntentsList().size()<5){
-                        Intent intent = new Intent(l.getCurve(),0f,20,intentType);
+                        //Intent intent = new Intent(l.getCurve(),0f,20,intentType);
+                        Intent intent = createIntentByType(l.getCurve(),0f,20,intentType);
                         l.addIntent(intent);
                         graph_pane.getChildren().add(intent);
                         treeManager.addIntentToTree(l);
+                        intent.loadAttributeInspector();
+                        deselectAll();
                     }else{
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("OVERFLOW ERROR");
@@ -419,7 +433,8 @@ public class RootLayout extends AnchorPane{
                     link.setSource(source);
                     link.setTarget(target);
 
-                    Intent intent = new Intent(link.getCurve(),0.5f,20,intentType);
+                    //Intent intent = new Intent(link.getCurve(),0.5f,20,intentType);
+                    Intent intent = createIntentByType(link.getCurve(),0.5f,20,intentType);
                     link.bindEnds(source, target,intent);
                     graph_pane.getChildren().add(intent);
 
@@ -428,6 +443,8 @@ public class RootLayout extends AnchorPane{
                     target.addAnchoredLink(link);
                     source.addAnchoredLink(link);
                     treeManager.addLinkToTree(link,source,target);
+                    intent.loadAttributeInspector();
+                    deselectAll();
 
                 }
             }
@@ -442,7 +459,11 @@ public class RootLayout extends AnchorPane{
             @Override
             public void handle(ActionEvent event) {
                 IntentType intentType = IntentType.buttonClick;
-                createLink(container,intentType);
+                try {
+                    createLink(container,intentType);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         MenuItem item2 = new MenuItem("Implicit Intent");
@@ -451,7 +472,11 @@ public class RootLayout extends AnchorPane{
             @Override
             public void handle(ActionEvent event) {
                 IntentType intentType = IntentType.implicit;
-                createLink(container,intentType);
+                try {
+                    createLink(container,intentType);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         MenuItem item3 = new MenuItem("Embed");
@@ -460,7 +485,11 @@ public class RootLayout extends AnchorPane{
             @Override
             public void handle(ActionEvent event) {
                 IntentType intentType = IntentType.embed;
-                createLink(container,intentType);
+                try {
+                    createLink(container,intentType);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -490,14 +519,49 @@ public class RootLayout extends AnchorPane{
     }
     public void deselectAll(){
         //clean attribute inspector
-        AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
-        inspectorManager.setText("");
         //deselect item
         SelectedItem selectedItem = SelectedItem.getInstance();
         selectedItem.deselect();
         //deselect tree item
         StructureTreeManager treeManager = StructureTreeManager.getInstance();
         treeManager.deselectAll();
+    }
+
+
+    //CODE GENERATION (button click)
+    public void generateCode() throws IOException {
+        CodeGenerator codeGenerator = new CodeGenerator();
+        List<DraggableActivity> activities = StructureTreeManager.getInstance().getActivitiesFromTree();
+        //generate java file and xml file for all the activities
+        for(DraggableActivity a : activities){
+            codeGenerator.generateCode(a);
+        }
+        //register activities in Android Manifest
+        codeGenerator.generateManifest(activities);
+    }
+
+    private Intent createIntentByType(CubicCurve curve,float t, double radius, IntentType type) throws IOException {
+        /*switch (type) {
+
+            case buttonClick:
+                ButtonClickIntent buttonClickIntent = new ButtonClickIntent(curve,t,radius,type);
+                return buttonClickIntent;
+                break;
+
+            case implicit:
+
+                break;
+
+            case embed:
+
+                break;
+
+            default:
+                break;
+        }*/
+        ButtonClickIntent buttonClickIntent = new ButtonClickIntent(curve,t,radius,type);
+        return buttonClickIntent;
+
     }
 
 }

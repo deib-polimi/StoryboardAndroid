@@ -1,0 +1,3 @@
+case ${N_CASE}:
+    ${FRAGMENT} tab${N} = new ${FRAGMENT}();
+    return tab${N};

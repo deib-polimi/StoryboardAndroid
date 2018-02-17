@@ -1,15 +1,11 @@
 package template.sample;
 
-import com.google.common.io.Resources;
-import com.intellij.openapi.project.ProjectManager;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -20,11 +16,7 @@ import template.managers.StructureTreeManager;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.intellij.openapi.actionSystem.AnAction.getEventProject;
 
 /**
  * Created by utente on 24/11/2017.
@@ -86,7 +78,7 @@ public class RootLayout extends AnchorPane{
         int r = 0;
         DragIcon[] icons = new DragIcon[length];
         for (int i = 0; i <length; i++) {
-           if (c<2){
+           /*if (c<2){
                 DragIcon icn = new DragIcon();
                 addDragDetection(icn);
                 icn.setType(DragControllerType.values()[i]);
@@ -99,8 +91,13 @@ public class RootLayout extends AnchorPane{
                 addDragDetection(icn);
                 icn.setType(DragControllerType.values()[i]);
                 controllers_grid.add(icn,c,r);
-            }
-            c++;
+            }*/
+            DragIcon icn = new DragIcon();
+            addDragDetection(icn);
+            icn.setType(DragControllerType.values()[i]);
+            controllers_grid.add(icn,0,i);
+            controllers_grid.add(new Label(icn.getType().toString()),1,i);
+            //c++;
 
             structure_tree.setOnKeyPressed( new EventHandler<KeyEvent>()
             {
@@ -217,9 +214,9 @@ public class RootLayout extends AnchorPane{
                     if (container.getValue("scene_coords") != null){
 
                         //DraggableActivity activity = new DraggableActivity();
-                        EmptyActivity activity = null;
+                        DraggableActivity activity = null;
                         try {
-                            activity = new EmptyActivity();
+                            activity = createActivityByType(DragControllerType.valueOf(container.getValue("type")));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -237,6 +234,7 @@ public class RootLayout extends AnchorPane{
 
                         TreeItem<TreeItemParameter> item = new TreeItem<TreeItemParameter>(new TreeItemParameter(activity.getName(),activity.getId()));
                         rootItem.getChildren().add(item);
+                        activity.loadInspectorListeners();
 
                     }
                 }
@@ -256,7 +254,7 @@ public class RootLayout extends AnchorPane{
                     if (sourceId != null && targetId != null && !sourceId.equals(targetId)) {
                         Point2D point = container.getValue("drop_coords");
                         ContextMenu contextMenu = new ContextMenu();
-                        buildContextMenu(contextMenu,container);
+                        buildContextMenu(contextMenu,container,(DraggableActivity)searchById(sourceId),(DraggableActivity)searchById(targetId));
                         contextMenu.show(graph_pane, point.getX(), point.getY());
                     }
 
@@ -379,7 +377,7 @@ public class RootLayout extends AnchorPane{
         return null;
     }
 
-    private void createLink(DragContainer container,IntentType intentType) throws IOException {
+    public void createLink(DragContainer container,IntentType intentType) throws IOException {
         //bind the ends of our link to the nodes whose id's are stored in the drag container
         String sourceId = container.getValue("source");
         String targetId = container.getValue("target");
@@ -442,6 +440,9 @@ public class RootLayout extends AnchorPane{
                     //la posizione di arrow e icone intents quando sposto activity nel grafo
                     target.addAnchoredLink(link);
                     source.addAnchoredLink(link);
+                    if(intentType == IntentType.tabIntent){
+                        target.setFragment(true);
+                    }
                     treeManager.addLinkToTree(link,source,target);
                     intent.loadAttributeInspector();
                     deselectAll();
@@ -452,49 +453,10 @@ public class RootLayout extends AnchorPane{
         }
     }
 
-    public void buildContextMenu(ContextMenu contextMenu,DragContainer container){
-        MenuItem item1 = new MenuItem("Button Click");
-        item1.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                IntentType intentType = IntentType.buttonClick;
-                try {
-                    createLink(container,intentType);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        MenuItem item2 = new MenuItem("Implicit Intent");
-        item2.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                IntentType intentType = IntentType.implicit;
-                try {
-                    createLink(container,intentType);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        MenuItem item3 = new MenuItem("Embed");
-        item3.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                IntentType intentType = IntentType.embed;
-                try {
-                    createLink(container,intentType);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+    public void buildContextMenu(ContextMenu contextMenu,DragContainer container,DraggableActivity source,DraggableActivity target){
 
         // Add MenuItem to ContextMenu
-        contextMenu.getItems().addAll(item1, item2,item3);
+        contextMenu.getItems().addAll(source.getMenuItems(this,container,target));
     }
 
     private Node searchById (String id){
@@ -541,27 +503,54 @@ public class RootLayout extends AnchorPane{
     }
 
     private Intent createIntentByType(CubicCurve curve,float t, double radius, IntentType type) throws IOException {
-        /*switch (type) {
+        Intent intent = null;
+        switch (type) {
 
             case buttonClick:
-                ButtonClickIntent buttonClickIntent = new ButtonClickIntent(curve,t,radius,type);
-                return buttonClickIntent;
+                intent = new ButtonClickIntent(curve,t,radius,type);
                 break;
 
-            case implicit:
-
+            case fabClick:
+                intent = new FABIntent(curve,t,radius,type);
                 break;
 
-            case embed:
+            case loginClick:
+                intent = new LoginIntent(curve,t,radius,type);
+                break;
 
+            case tabIntent:
+                intent = new TabIntent(curve,t,radius,type);
                 break;
 
             default:
                 break;
-        }*/
-        ButtonClickIntent buttonClickIntent = new ButtonClickIntent(curve,t,radius,type);
-        return buttonClickIntent;
-
+        }
+        return intent;
     }
 
+    private DraggableActivity createActivityByType(DragControllerType type) throws IOException {
+        DraggableActivity activity = null;
+        switch (type) {
+
+            case emptyActivity:
+                activity = new EmptyActivity();
+                break;
+
+            case basicActivity:
+                activity = new BasicActivity();
+                break;
+
+            case loginActivity:
+                activity = new LoginActivity();
+                break;
+
+            case tabbedActivity:
+                activity = new TabbedActivity();
+                break;
+
+            default:
+                break;
+        }
+        return activity;
+    }
 }

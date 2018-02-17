@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * Created by utente on 07/02/2018.
  */
-public class ButtonClickIntentAttributes extends GridPane {
+public class ButtonClickIntentAttributes extends IntentAttributes {
 
     @FXML
     private Label target_label;
@@ -60,7 +60,6 @@ public class ButtonClickIntentAttributes extends GridPane {
         name_txt.setText(intent.getName());
         button_id_txt.setText(intent.getButtonId());
         button_txt.setText(intent.getButtonText());
-        createListeners(intent);
     }
 
     public void createListeners(ButtonClickIntent intent){

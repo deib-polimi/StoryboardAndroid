@@ -7,10 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import kotlin.reflect.jvm.internal.impl.util.ModuleVisibilityHelper;
 import template.attributeInspector.EmptyActivityAttributes;
-import template.sample.DraggableActivity;
-import template.sample.Intent;
-import template.sample.IsInitialActivity;
-import template.sample.Link;
+import template.sample.*;
 
 public class AttributeInspectorManager {
 
@@ -43,24 +40,56 @@ public class AttributeInspectorManager {
     public void loadActivityInspector (Node activityInspector,DraggableActivity activity){
         //clean attribute inspector
         cleanAttributeInspector();
-        //create tab
-        Tab activityTab = new Tab("Activity");
-        Tab intentTab = new Tab ("Intent");
-        //populate tabs
-        activityTab.setContent(activityInspector);
-        if(activity.getIntents().size()>0){
-            VBox intentInspectorsList = new VBox();
-            for(Intent i : activity.getOutgoingIntents()){
-                //create inspector section for each intent of the activity
-                intentInspectorsList.getChildren().add(i.getIntentInspector());
-                intentInspectorsList.getChildren().add(new Separator());
+        if(activity.getType()!= DragControllerType.tabbedActivity){
+            //create tab
+            Tab activityTab = new Tab("Activity");
+            Tab intentTab = new Tab ("Intent");
+            //populate tabs
+            if(activity.isFragment()){
+                //if activity is fragment, populate attribute inspector with a VBOX containing
+                //the fragment inspector and the inspector of the relative tab intent
+                VBox fragmentInspectorList = new VBox();
+                fragmentInspectorList.getChildren().add(activityInspector);
+                for (Intent i : activity.getIngoingIntents()){
+                    if (i.getType()==IntentType.tabIntent){
+                        fragmentInspectorList.getChildren().add(i.getIntentInspector());
+                    }
+                }
+                activityTab.setContent(fragmentInspectorList);
 
+            }else{
+                activityTab.setContent(activityInspector);
             }
-            intentTab.setContent(intentInspectorsList);
+
+            if(activity.getIntents().size()>0){
+                VBox intentInspectorsList = new VBox();
+                for(Intent i : activity.getOutgoingIntents()){
+                    //create inspector section for each intent of the activity
+                    intentInspectorsList.getChildren().add(i.getIntentInspector());
+                    intentInspectorsList.getChildren().add(new Separator());
+
+                }
+                intentTab.setContent(intentInspectorsList);
+            }
+            //load tabs to attribute inspector
+            attributeInspector.getTabs().add(activityTab);
+            attributeInspector.getTabs().add(intentTab);
+        }else{
+            Tab activityTab = new Tab("Activity");
+            VBox tabsInspectorsList = new VBox();
+            tabsInspectorsList.getChildren().add(activityInspector);
+            if(activity.getIntents().size()>0){
+                for(Intent i : activity.getOutgoingIntents()){
+                    //create inspector section for each tab of the activity
+                    tabsInspectorsList.getChildren().add(i.getIntentInspector());
+                    tabsInspectorsList.getChildren().add(new Separator());
+
+                }
+            }
+            activityTab.setContent(tabsInspectorsList);
+            attributeInspector.getTabs().add(activityTab);
         }
-        //load tabs to attribute inspector
-        attributeInspector.getTabs().add(activityTab);
-        attributeInspector.getTabs().add(intentTab);
+
 
     }
     public void loadIntentInspector (Node intentInspector){

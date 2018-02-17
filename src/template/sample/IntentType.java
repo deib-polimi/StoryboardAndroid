@@ -5,6 +5,7 @@ package template.sample;
  */
 public enum IntentType {
     buttonClick,
-    implicit,
-    embed
+    fabClick,
+    loginClick,
+    tabIntent
 }

@@ -1,0 +1,2 @@
+Intent ${INTENT_ID} = new Intent(getApplicationContext(),${DESTINATION_ACTIVITY}.class);
+                startActivity(${INTENT_ID});

@@ -3,11 +3,11 @@ package template.sample;
 import com.google.common.io.Resources;
 import template.ProjectHandler;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,27 +22,69 @@ public class CodeGenerator {
     public void generateCode(DraggableActivity activity) throws IOException {
         ProjectHandler projectHandler = ProjectHandler.getInstance();
         //create java file
+
         File f = new File(projectHandler.getProjectPath()+"/app/src/main/java/"+projectHandler.getPackagePath()+"/"+activity.getName()+".java");
+        //File f = new File("C:/Users/utente/Desktop/"+activity.getName()+".java");
         f.getParentFile().mkdirs();
         f.createNewFile();
         //write code in java file
         BufferedWriter writer = new BufferedWriter(
                 new FileWriter( projectHandler.getProjectPath()+"/app/src/main/java/"+projectHandler.getPackagePath()+"/"+activity.getName()+".java"));
-        writer.write(activity.createJavaCode());
+        /*BufferedWriter writer = new BufferedWriter(
+                new FileWriter( "C:/Users/utente/Desktop/"+activity.getName()+".java"));*/
+        if(activity.isFragment()){
+            writer.write(activity.createFragmentCode());
+        }else{
+            writer.write(activity.createJavaCode());
+        }
+        //writer.write(activity.createJavaCode());
         if ( writer != null)
             writer.close( );
+
+        List<String> wellFormedOut =wellFormedJavaCode(projectHandler.getProjectPath()+"/app/src/main/java/"+projectHandler.getPackagePath()+"/"+activity.getName()+".java");
+        writer = new BufferedWriter(
+                new FileWriter( projectHandler.getProjectPath()+"/app/src/main/java/"+projectHandler.getPackagePath()+"/"+activity.getName()+".java"));
+        for(String line: wellFormedOut){
+            writer.write(line);
+            writer.newLine();
+        }
+        if ( writer != null)
+            writer.close( );
+
+
+
+
         //create xml file
-        f = new File(projectHandler.getProjectPath()+"/app/src/main/res/layout/activity"
-                +generateLayoutName(activity.getName())+".xml");
+        f = new File(projectHandler.getProjectPath()+"/app/src/main/res/layout/"
+                +activity.generateLayoutName(activity.getName())+".xml");
+        //f = new File("C:/Users/utente/Desktop/"+activity.getName()+".xml");
         f.getParentFile().mkdirs();
         f.createNewFile();
         //write code in xml file
         writer = new BufferedWriter(
-                new FileWriter( projectHandler.getProjectPath()+"/app/src/main/res/layout/activity"
-                        +generateLayoutName(activity.getName())+".xml"));
+                new FileWriter( projectHandler.getProjectPath()+"/app/src/main/res/layout/"
+                        //+generateLayoutName(activity.getName())+".xml"));
+                        +activity.generateLayoutName(activity.getName())+".xml"));
+        /*writer = new BufferedWriter(
+                new FileWriter( "C:/Users/utente/Desktop/"+activity.getName()+".xml"));*/
         writer.write(activity.createXMLCode());
         if ( writer != null)
             writer.close( );
+
+        wellFormedOut =null;
+        wellFormedOut = wellFormedXMLCode(projectHandler.getProjectPath()+"/app/src/main/res/layout/"
+                +activity.generateLayoutName(activity.getName())+".xml");
+        writer = new BufferedWriter(
+                new FileWriter( projectHandler.getProjectPath()+"/app/src/main/res/layout/"
+                        +activity.generateLayoutName(activity.getName())+".xml"));
+
+        for(String line: wellFormedOut){
+            writer.write(line);
+            writer.newLine();
+        }
+        if ( writer != null)
+            writer.close( );
+
     }
 
     public String provideTemplateForName(String templateName) throws IOException {
@@ -64,7 +106,17 @@ public class CodeGenerator {
         String activities = "";
 
         for(DraggableActivity a : activitiesList){
-            activities = activities.concat(a.getManifest()+"\n\t\t");
+            if(!a.isFragment()){
+                activities = activities.concat(a.getManifest()+"\n\t\t");
+            }
+        }
+        if(searchActivityByType(activitiesList,DragControllerType.loginActivity)){
+            template = template.replace("${PERMISSIONS}","<!-- To auto-complete the email text field in the login form with the user's emails -->\n\t"
+                    +"<uses-permission android:name=\"android.permission.GET_ACCOUNTS\" />\n"
+                    +"<uses-permission android:name=\"android.permission.READ_PROFILE\" />\n"
+                    +"<uses-permission android:name=\"android.permission.READ_CONTACTS\" />");
+        }else{
+            template = template.replace("${PERMISSIONS}","");
         }
 
         template = template.replace("${PACKAGE}",ProjectHandler.getInstance().getPackage());
@@ -79,6 +131,16 @@ public class CodeGenerator {
         BufferedWriter writer = new BufferedWriter(
                 new FileWriter( projectHandler.getManifestPath()));
         writer.write(template);
+        if ( writer != null)
+            writer.close( );
+
+        List<String> wellFormedOut =wellFormedXMLCode(projectHandler.getManifestPath());
+        writer = new BufferedWriter(
+                new FileWriter( projectHandler.getManifestPath()));
+        for(String line: wellFormedOut){
+            writer.write(line);
+            writer.newLine();
+        }
         if ( writer != null)
             writer.close( );
     }
@@ -99,5 +161,113 @@ public class CodeGenerator {
         }
         return out;
     }
+    private boolean searchActivityByType(List<DraggableActivity> activitiesList,DragControllerType type){
+        boolean found = false;
+        for(DraggableActivity a : activitiesList){
+            if (a.getType() == type){
+                found = true;
+                return found;
+            }
+        }
+        return found;
+    }
+
+    private List<String>wellFormedJavaCode(String path) throws IOException {
+        FileReader in = new FileReader(path);
+        BufferedReader br = new BufferedReader(in);
+        List<String> out = new ArrayList<String>();
+        int open = 0;
+        String s = "";
+        boolean closeBrace = false;
+        boolean openBrace =false;
+        while ((s = br.readLine()) != null) {
+            s=s.trim();
+            Scanner scanner = new Scanner(s);
+
+            while(scanner.hasNext()){
+                String x =scanner.next();
+                int z = x.length();
+                for(int y = 0; y < z; y++){
+                    if((x.charAt(y))=='{'){
+                        openBrace = true;
+
+                    }else if((x.charAt(y))=='}'){
+                        closeBrace = true;
+                    }
+                }
+            }
+            if(closeBrace && !openBrace){
+                open--;
+                closeBrace = false;
+            }
+            for (int i = 0;i<open;i++){
+                s = "\t"+s;
+            }
+            out.add(s);
+            if (openBrace && !closeBrace){
+                open++;
+                openBrace = false;
+            }
+            if (openBrace&& closeBrace){
+                openBrace = false;
+                closeBrace = false;
+            }
+        }
+        return out;
+
+    }
+
+    private List<String>wellFormedXMLCode(String path) throws IOException {
+        FileReader in = new FileReader(path);
+        BufferedReader br = new BufferedReader(in);
+        List<String> out = new ArrayList<String>();
+        int open = 0;
+        String s = "";
+        boolean closeTag = false;
+        boolean openTag =false;
+        boolean emptyCloseTag = false;
+        while ((s = br.readLine()) != null) {
+            s=s.trim();
+            Scanner scanner = new Scanner(s);
+
+            while(scanner.hasNext()){
+                String x =scanner.next();
+                int z = x.length();
+                for(int y = 0; y < z; y++){
+                    if((x.charAt(y))=='<' && (x.charAt(y+1))!='/' && (x.charAt(y+1))!='?'){
+                        openTag = true;
+
+                    }else if((x.charAt(y))=='<' && (x.charAt(y+1))=='/'){
+                        closeTag = true;
+                    }else if ((x.charAt(y))=='/' && (x.charAt(y+1))=='>'){
+                        emptyCloseTag = true;
+                    }
+                }
+            }
+            if(closeTag && !openTag){
+                open--;
+                closeTag = false;
+            }
+            for (int i = 0;i<open;i++){
+                s = "\t"+s;
+            }
+            out.add(s);
+            if (openTag && !closeTag){
+                open++;
+                openTag = false;
+            }
+            if(emptyCloseTag){
+                open--;
+                emptyCloseTag = false;
+            }
+            if (openTag && closeTag){
+                openTag = false;
+                closeTag = false;
+            }
+        }
+        return out;
+    }
+
+
 
 }

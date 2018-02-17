@@ -28,16 +28,8 @@ public class ButtonClickIntent extends Intent {
         buttonText="";
         classTemplate = codeGenerator.provideTemplateForName("templates/ButtonClickTemplate");
         layoutTemplate = codeGenerator.provideTemplateForName("templates/ButtonLayoutTemplate");
+        intentInspector.createListeners(this);
     }
-
-    @Override
-    public void fillAttributeInspector(){
-        AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
-        intentInspector.fillValues(this);
-        inspectorManager.loadIntentInspector(intentInspector);
-    }
-
-
 
     public String getButtonId() {
         return buttonId;

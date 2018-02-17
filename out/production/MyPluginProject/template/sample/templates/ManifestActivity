@@ -1,1 +1,1 @@
-<activity android:name=".${ACTIVITY}">${INTENT_FILTER}</activity>
+<activity android:name=".${ACTIVITY}"${ATTRIBUTES}>${INTENT_FILTER}</activity>

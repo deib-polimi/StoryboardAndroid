@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.*;
@@ -63,6 +64,8 @@ public class DraggableActivity extends AnchorPane{
     private List<Link> anchoredLinks = new ArrayList<Link>();
 
     ContextMenu contextMenu = new ContextMenu();
+
+    private boolean isFragment = false;
 
     public DraggableActivity(){
 
@@ -492,10 +495,29 @@ public class DraggableActivity extends AnchorPane{
         }
         return outgoingLinks;
     }
+    public List<Link> getIngoingLinks(){
+        List<Link> ingoingLinks = new ArrayList<Link>();
+        for(Link l: getAnchoredLinks()){
+            if(l.getTarget() == this){
+                ingoingLinks.add(l);
+            }
+        }
+        return ingoingLinks;
+    }
 
     public List<Intent> getOutgoingIntents(){
         List<Intent> intentList = new ArrayList<Intent>();
         for(Link l: getOutgoingLinks()){
+            for(Intent i: l.getIntentsList()){
+                intentList.add(i);
+            }
+        }
+        return intentList;
+    }
+
+    public List<Intent> getIngoingIntents(){
+        List<Intent> intentList = new ArrayList<Intent>();
+        for(Link l: getIngoingLinks()){
             for(Intent i: l.getIntentsList()){
                 intentList.add(i);
             }
@@ -515,11 +537,39 @@ public class DraggableActivity extends AnchorPane{
         }
         return intentList;
     }
+    public boolean isFragment(){
+        return isFragment;
+    }
+    public void setFragment(boolean isFragment){
+        this.isFragment = isFragment;
+        if(isFragment){
+            //if fragment was initial activity, select its container application as new initial activity
+            if(IsInitialActivity.getInstance().isInitialActivity(this)){
+                isInitialActivity(false);
+            }
+            IsInitialActivity.getInstance().setInitialActivity(getContainerActivity(this));
+
+        }
+
+    }
 
     public void isInitialActivity(boolean isInitial){}
-    public String createJavaCode(){return null;}
-    public String createXMLCode(){return null;}
+    public String createJavaCode() throws IOException {return null;}
+    public String createXMLCode() throws IOException {return null;}
     public String getManifest() throws IOException {return null;}
+    public List<MenuItem> getMenuItems(RootLayout root,DragContainer container,DraggableActivity target){return null;};
+    public String createFragmentCode() throws IOException {return null;}
+    public String generateLayoutName(String objectName){return null;}
+    public void loadInspectorListeners(){};
+    public void setFragmentInspector(boolean isFragment){};
+    public DraggableActivity getContainerActivity(DraggableActivity fragment){
+        for (Intent i : getIngoingIntents()){
+            if(i.getType() == IntentType.tabIntent){
+                return i.getBelongingLink().getSource();
+            }
+        }
+        return null;
+    }
 
 
 

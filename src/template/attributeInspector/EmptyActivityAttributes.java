@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import template.sample.DraggableActivity;
 import template.sample.EmptyActivity;
 import template.sample.IsInitialActivity;
 
@@ -44,13 +45,12 @@ public class EmptyActivityAttributes extends GridPane{
 
     }
 
-    public void fillValues(EmptyActivity activity){
+    public void fillValues(DraggableActivity activity){
         name_txt.setText(activity.getName());
-        createListeners(activity);
         is_initial.setSelected(IsInitialActivity.getInstance().isInitialActivity(activity));
     }
 
-    public void createListeners(EmptyActivity activity){
+    public void createListeners(DraggableActivity activity){
         name_txt.textProperty().addListener((observable, oldValue, newValue) -> {
             activity.updateName(newValue);
         });

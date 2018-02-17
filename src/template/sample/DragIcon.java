@@ -51,17 +51,17 @@ public class DragIcon extends AnchorPane {
         getStyleClass().add("icon-green");
         switch (mType) {
 
-            case gridView:
+            case basicActivity:
                 icon_image.setImage(new Image(getClass().getResource("/img/container.png").toString()));
                 break;
 
-            case listView:
+            /*case listView:
                 icon_image.setImage(new Image(getClass().getResource("/img/gridview.png").toString()));
                 break;
 
             case plus:
                 icon_image.setImage(new Image(getClass().getResource("/img/listview.png").toString()));
-                break;
+                break;*/
 
             case emptyActivity:
                 icon_image.setImage(new Image(getClass().getResource("/img/container.png").toString()));
@@ -71,9 +71,13 @@ public class DragIcon extends AnchorPane {
                 icon_image.setImage(new Image(getClass().getResource("/img/gridview.png").toString()));
                 break;
 
-            case tabBar:
-                icon_image.setImage(new Image(getClass().getResource("/img/listview.png").toString()));
+            case tabbedActivity:
+                icon_image.setImage(new Image(getClass().getResource("/img/gridview.png").toString()));
                 break;
+
+            /*case tabBar:
+                icon_image.setImage(new Image(getClass().getResource("/img/listview.png").toString()));
+                break;*/
 
             default:
                 break;

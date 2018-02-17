@@ -12,6 +12,8 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import template.attributeInspector.ButtonClickIntentAttributes;
+import template.attributeInspector.FABIntentAttributes;
+import template.attributeInspector.IntentAttributes;
 import template.managers.AttributeInspectorManager;
 import template.managers.StructureTreeManager;
 
@@ -48,7 +50,7 @@ public class Intent extends Circle{
                 if (mouseEvent.getClickCount() == 2){
                     Intent i = (Intent) mouseEvent.getSource();
                     //update attribute inspector
-                    fillAttributeInspector();
+                    loadAttributeInspector();
                     //highlight and store selected item
                     SelectedItem selectedItem = SelectedItem.getInstance();
                     selectedItem.setSelectedItem(i);
@@ -71,13 +73,21 @@ public class Intent extends Circle{
                 image= new Image(getClass().getResource("/img/container.png").toString());
                 break;
 
-            case implicit:
+            case fabClick:
                 image= new Image(getClass().getResource("/img/gridview.png").toString());
                 break;
 
-            case embed:
+            case loginClick:
                 image= new Image(getClass().getResource("/img/listview.png").toString());
                 break;
+
+            case tabIntent:
+                image= new Image(getClass().getResource("/img/listview.png").toString());
+                break;
+
+            /*case embed:
+                image= new Image(getClass().getResource("/img/listview.png").toString());
+                break;*/
 
         }
         return image;
@@ -135,6 +145,9 @@ public class Intent extends Circle{
     }
 
     public void delete (){
+        if(type ==IntentType.tabIntent){
+            belongingLink.getTarget().setFragment(false);
+        }
         //remove intent from graph
         AnchorPane parent  = (AnchorPane) this.getParent();
         parent.getChildren().remove(this);
@@ -159,9 +172,7 @@ public class Intent extends Circle{
         this.setEffect(null);
     }
 
-
-    public void fillAttributeInspector(){}
     public void loadAttributeInspector(){}
-    public ButtonClickIntentAttributes getIntentInspector (){return null;}
+    public IntentAttributes getIntentInspector (){return null;}
 
 }

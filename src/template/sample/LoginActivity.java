@@ -136,29 +136,35 @@ public class LoginActivity extends DraggableActivity {
                 out = out+x.charAt(y);
             }
         }
-        return out;
+
+        return "activity"+out;
+
     }
 
     @Override
     public java.util.List<MenuItem> getMenuItems(RootLayout root, DragContainer container,DraggableActivity target){
         List<MenuItem> items = new ArrayList<MenuItem>();
         //allow only one login intent
-        if(super.getOutgoingIntentsForType(IntentType.loginClick).size() ==0){
-            MenuItem item1 = new MenuItem("Login Intent");
-            item1.setOnAction(new EventHandler<ActionEvent>() {
+        if(!target.isFragment())
+        {
+            if(super.getOutgoingIntentsForType(IntentType.loginClick).size() ==0){
+                MenuItem item1 = new MenuItem("Login Intent");
+                item1.setOnAction(new EventHandler<ActionEvent>() {
 
-                @Override
-                public void handle(ActionEvent event) {
-                    IntentType intentType = IntentType.loginClick;
-                    try {
-                        root.createLink(container,intentType);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    @Override
+                    public void handle(ActionEvent event) {
+                        IntentType intentType = IntentType.loginClick;
+                        try {
+                            root.createLink(container,intentType);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
-            items.add(item1);
+                });
+                items.add(item1);
+            }
         }
+
         return items;
     };
 }

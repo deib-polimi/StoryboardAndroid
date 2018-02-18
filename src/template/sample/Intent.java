@@ -85,9 +85,9 @@ public class Intent extends Circle{
                 image= new Image(getClass().getResource("/img/listview.png").toString());
                 break;
 
-            /*case embed:
+            case bottomNavigIntent:
                 image= new Image(getClass().getResource("/img/listview.png").toString());
-                break;*/
+                break;
 
         }
         return image;
@@ -145,7 +145,7 @@ public class Intent extends Circle{
     }
 
     public void delete (){
-        if(type ==IntentType.tabIntent){
+        if(type ==IntentType.tabIntent ||type ==IntentType.tabIntent){
             belongingLink.getTarget().setFragment(false);
         }
         //remove intent from graph

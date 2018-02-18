@@ -14,9 +14,7 @@ public class ${ACTIVITY_NAME} extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity${ACTIVITY_LAYOUT});
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.${ACTIVITY_LAYOUT});
 
         ${INTENT}
 

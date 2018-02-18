@@ -75,9 +75,9 @@ public class DragIcon extends AnchorPane {
                 icon_image.setImage(new Image(getClass().getResource("/img/gridview.png").toString()));
                 break;
 
-            /*case tabBar:
+            case bottomNavigationActivity:
                 icon_image.setImage(new Image(getClass().getResource("/img/listview.png").toString()));
-                break;*/
+                break;
 
             default:
                 break;

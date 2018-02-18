@@ -84,7 +84,6 @@ public class CodeGenerator {
         }
         if ( writer != null)
             writer.close( );
-
     }
 
     public String provideTemplateForName(String templateName) throws IOException {
@@ -268,6 +267,102 @@ public class CodeGenerator {
         return out;
     }
 
+    public void generateNavigationMenu(List<BottomNavigationActivity> activities) throws IOException {
+        String template = provideTemplateForName("templates/NavigationMenu");
+        int n = 0;
+        String num ="";
+        List<String> icons = new ArrayList<String>();
+        for(BottomNavigationActivity a: activities){
+            //generate navigation.xml file containing menu with items of bottom navigation avtivity
+            if(n!=0){
+                num = Integer.toString(n);
+            }
+            String items="";
+            items = items.concat(((BottomNavigationActivity)a).createNavigationMenu());
+            template = template.replace("${ITEMS}",items);
 
+            ProjectHandler projectHandler = ProjectHandler.getInstance();
+            File f = new File(projectHandler.getProjectPath()+"/app/src/main/res/menu/navigation"+num+".xml");
+            f.getParentFile().mkdirs();
+            f.createNewFile();
+            //write code in xml file
+            BufferedWriter writer = new BufferedWriter(
+                    new FileWriter( projectHandler.getProjectPath()+"/app/src/main/res/menu/navigation"+num+".xml"));
+            writer.write(template);
+            if ( writer != null)
+                writer.close( );
+
+            List<String> wellFormedOut =null;
+            wellFormedOut = wellFormedXMLCode(projectHandler.getProjectPath()+"/app/src/main/res/menu/navigation"+num+".xml");
+            writer = new BufferedWriter(
+                    new FileWriter( projectHandler.getProjectPath()+"/app/src/main/res/menu/navigation"+num+".xml"));
+
+            for(String line: wellFormedOut){
+                writer.write(line);
+                writer.newLine();
+            }
+            if ( writer != null)
+                writer.close( );
+            n++;
+            for(String icon : a.getIcons()){
+                if(!icons.contains(icon)){
+                    icons.add(icon);
+                }
+            }
+
+        }
+        generateIcons(icons);
+
+    }
+
+    private void generateIcons(List<String> icons) throws IOException {
+        for(String icon:icons){
+            ProjectHandler projectHandler = ProjectHandler.getInstance();
+            File f = new File(projectHandler.getProjectPath()+"/app/src/main/res/drawable/"+icon+".xml");
+            f.getParentFile().mkdirs();
+            f.createNewFile();
+            //write code in xml file
+            BufferedWriter writer = new BufferedWriter(
+                    new FileWriter( projectHandler.getProjectPath()+"/app/src/main/res/drawable/"+icon+".xml"));
+            writer.write(getIconFile(icon));
+            if ( writer != null)
+                writer.close( );
+        }
+    }
+    private String getIconFile(String icon) throws IOException {
+        String template = provideTemplateForName("templates/DrawableIcon");
+        String path ="";
+        switch(icon){
+            case "ic_android_black_24dp":
+                path = IconsFile.ANDROID;
+                break;
+            case "ic_build_black_24dp":
+                path = IconsFile.BUILD;
+                break;
+            case "ic_dashboard_black_24dp":
+                path = IconsFile.DASHBOARD;
+                break;
+            case "ic_edit_black_24dp":
+                path = IconsFile.EDIT;
+                break;
+            case "ic_home_black_24dp":
+                path = IconsFile.HOME;
+                break;
+            case "ic_notifications_black_24dp":
+                path = IconsFile.NOTIFICATIONS;
+                break;
+            case "ic_person_black_24dp":
+                path = IconsFile.PERSON;
+                break;
+            case "ic_share_black_24dp":
+                path = IconsFile.SHARE;
+                break;
+            default:
+                path = null;
+                break;
+        }
+        template = template.replace("${PATH}","\""+path+"\"");
+        return template;
+    }
 
 }

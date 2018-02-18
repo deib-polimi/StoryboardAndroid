@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.MenuItem;
 import template.ProjectHandler;
 import template.attributeInspector.EmptyActivityAttributes;
+import template.attributeInspector.FragmentAttributes;
 import template.managers.AttributeInspectorManager;
 
 import java.io.IOException;
@@ -21,7 +22,9 @@ public class BasicActivity extends DraggableActivity {
 
     private String classTemplate;
     private String layoutTemplate;
+    private String fragmentTemplate;
     private EmptyActivityAttributes activityInspector= null;
+    private FragmentAttributes fragmentInspector = null;
     private CodeGenerator codeGenerator = new CodeGenerator();
 
     public BasicActivity() throws IOException {
@@ -29,6 +32,7 @@ public class BasicActivity extends DraggableActivity {
         //get activity and layout templates in String
         classTemplate = codeGenerator.provideTemplateForName("templates/BasicActivity");
         layoutTemplate = codeGenerator.provideTemplateForName("templates/BasicActivityLayout");
+        fragmentTemplate = codeGenerator.provideTemplateForName("templates/BasicFragment");
         FXMLLoader fxmlLoader = new FXMLLoader(
                 getClass().getResource("DraggableActivity.fxml")
         );
@@ -44,10 +48,15 @@ public class BasicActivity extends DraggableActivity {
         }
     }
 
+    public boolean isFragment() {
+        return super.isFragment();
+    }
+
     @FXML
     private void initialize() {
         super.init();
         activityInspector = new EmptyActivityAttributes();
+        fragmentInspector = new FragmentAttributes();
         super.setName("NewBasicActivity");
         loadInspector();
     }
@@ -82,7 +91,9 @@ public class BasicActivity extends DraggableActivity {
             fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode());
             template = template.replace("${INTENT}",fabIntent);
         }else{
-            template = template.replace("${INTENT}",codeGenerator.provideTemplateForName("templates/FABIntentEmpty"));
+            String emptyFAB =codeGenerator.provideTemplateForName("templates/FABIntentEmpty");
+            emptyFAB = emptyFAB.replace("${GET_VIEW}","");
+            template = template.replace("${INTENT}",emptyFAB);
         }
 
         template = template.replace("${IMPORTS}",imports);
@@ -95,6 +106,53 @@ public class BasicActivity extends DraggableActivity {
 
         return template;
     }
+
+    @Override
+    public String createFragmentCode() throws IOException {
+        String template = fragmentTemplate;
+        String imports = "";
+        String declarations = "";
+        String setViews = "";
+        String buttonClickintent = "";
+        String fabIntent = "";
+        //create code of the button click intents outgoing from the activity
+
+        if((super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0)||(super.getOutgoingIntentsForType(IntentType.fabClick).size()>0)){
+            imports = imports.concat(Imports.INTENT+"\n");
+        }
+        if (super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0){
+            //set imports
+            imports =imports.concat(Imports.BUTTON+"\n");
+            for(Intent i : super.getOutgoingIntentsForType(IntentType.buttonClick)){
+                //set buttons declarations
+                declarations = declarations.concat("private Button "+((ButtonClickIntent)i).getButtonId()+";\n");
+                setViews = setViews.concat(((ButtonClickIntent)i).getButtonId()+" = (Button) view.findViewById(R.id."
+                        +((ButtonClickIntent)i).getButtonId()+"_button);\n");
+                buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
+            }
+        }
+        if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0){
+
+            Intent intent = super.getOutgoingIntentsForType(IntentType.fabClick).get(0);
+            fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode());
+            template = template.replace("${INTENT}",fabIntent);
+        }else{
+            String emptyFAB =codeGenerator.provideTemplateForName("templates/FABIntentEmpty");
+            emptyFAB = emptyFAB.replace("${GET_VIEW}","view.");
+            template = template.replace("${INTENT}",emptyFAB);
+        }
+
+        template = template.replace("${IMPORTS}",imports);
+        template = template.replace("${DECLARATIONS}",declarations);
+        template = template.replace("${SET_VIEWS}",setViews);
+        template = template.replace("${BUTTON_CLICK_INTENT}",buttonClickintent);
+        template = template.replace("${ACTIVITY_NAME}",super.getName());
+        template = template.replace("${ACTIVITY_LAYOUT}",generateLayoutName(super.getName()));
+        template = template.replace("${PACKAGE}", ProjectHandler.getInstance().getPackage());
+
+        return template;
+    }
+
     @Override
     public String createXMLCode(){
         String template = layoutTemplate;
@@ -111,13 +169,20 @@ public class BasicActivity extends DraggableActivity {
     @Override
     public void loadInspectorListeners(){
         activityInspector.createListeners(this);
+        fragmentInspector.createListeners(this);
     }
 
     @Override
     public void loadInspector(){
         AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
-        activityInspector.fillValues(this);
-        inspectorManager.loadActivityInspector(activityInspector,this);
+        if(isFragment()){
+            fragmentInspector.fillValues(this);
+            inspectorManager.loadActivityInspector(fragmentInspector,this);
+        }else{
+            activityInspector.fillValues(this);
+            inspectorManager.loadActivityInspector(activityInspector,this);
+        }
+
     }
 
     @Override
@@ -130,8 +195,7 @@ public class BasicActivity extends DraggableActivity {
         String manifest = codeGenerator.provideTemplateForName("templates/ManifestActivity");
         manifest = manifest.replace("${ACTIVITY}",super.getName());
 
-        manifest = manifest.replace("${ATTRIBUTES}"," android:label=\""+this.getName()+"\"\n"
-                +"android:theme=\"@style/AppTheme.NoActionBar\"");
+        manifest = manifest.replace("${ATTRIBUTES}"," android:label=\""+this.getName()+"\"");
         if (IsInitialActivity.getInstance().isInitialActivity(this)){
             manifest = manifest.replace("${INTENT_FILTER}","\n"+codeGenerator.provideTemplateForName("templates/IntentFilterLauncher")+"\n");
         }else {
@@ -155,34 +219,23 @@ public class BasicActivity extends DraggableActivity {
                 out = out+x.charAt(y);
             }
         }
-        return out;
+        if(isFragment()){
+            return "fragment"+out;
+        }else{
+            return "activity"+out;
+        }
     }
 
     @Override
     public java.util.List<MenuItem> getMenuItems(RootLayout root, DragContainer container,DraggableActivity target){
         List<MenuItem> items = new ArrayList<MenuItem>();
-        MenuItem item1 = new MenuItem("Button Click");
-        item1.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                IntentType intentType = IntentType.buttonClick;
-                try {
-                    root.createLink(container,intentType);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        items.add(item1);
-        //allow only one FAB intent
-        if(super.getOutgoingIntentsForType(IntentType.fabClick).size() ==0){
-            MenuItem item2 = new MenuItem("FAB Intent");
-            item2.setOnAction(new EventHandler<ActionEvent>() {
+        if(!target.isFragment()){
+            MenuItem item1 = new MenuItem("Button Click");
+            item1.setOnAction(new EventHandler<ActionEvent>() {
 
                 @Override
                 public void handle(ActionEvent event) {
-                    IntentType intentType = IntentType.fabClick;
+                    IntentType intentType = IntentType.buttonClick;
                     try {
                         root.createLink(container,intentType);
                     } catch (IOException e) {
@@ -190,8 +243,26 @@ public class BasicActivity extends DraggableActivity {
                     }
                 }
             });
-            items.add(item2);
+            items.add(item1);
+            //allow only one FAB intent
+            if(super.getOutgoingIntentsForType(IntentType.fabClick).size() ==0){
+                MenuItem item2 = new MenuItem("FAB Intent");
+                item2.setOnAction(new EventHandler<ActionEvent>() {
+
+                    @Override
+                    public void handle(ActionEvent event) {
+                        IntentType intentType = IntentType.fabClick;
+                        try {
+                            root.createLink(container,intentType);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                items.add(item2);
+            }
         }
+
         return items;
     };
 

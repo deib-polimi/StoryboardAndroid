@@ -216,9 +216,11 @@ public class TabbedActivity extends DraggableActivity {
     @Override
     public java.util.List<MenuItem> getMenuItems(RootLayout root, DragContainer container,DraggableActivity target){
         List<MenuItem> items = new ArrayList<MenuItem>();
-        if(target.getIngoingLinks().size()==0 && target.getType()!=DragControllerType.tabbedActivity){
+        if(target.getIngoingLinks().size()==0 && target.getType()!=DragControllerType.tabbedActivity
+                && target.getType()!=DragControllerType.loginActivity
+                && target.getType()!=DragControllerType.bottomNavigationActivity){
             //if target isn't already a tab or it isn't target of other intents (i.e. it couldn't be a fragment)
-            //and target isn't a tabbed activity
+            //and target isn't a tabbed activity or login activity or bottom navigation activity
 
             MenuItem item1 = new MenuItem("Tab");
             item1.setOnAction(new EventHandler<ActionEvent>() {

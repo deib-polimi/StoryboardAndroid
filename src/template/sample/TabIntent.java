@@ -42,7 +42,7 @@ public class TabIntent extends Intent {
     public void loadAttributeInspector(){
         AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
         intentInspector.fillValues(this);
-        inspectorManager.loadIntentInspector(intentInspector);
+        inspectorManager.loadIntentInspector(intentInspector,this);
     }
     public String getIntentCode(){
         String template = classTemplate;

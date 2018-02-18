@@ -1,8 +1,8 @@
-FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+FloatingActionButton fab = (FloatingActionButton) ${GET_VIEW}findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent ${INTENT_ID} = new Intent(getApplicationContext(),${DESTINATION_ACTIVITY}.class);
+                Intent ${INTENT_ID} = new Intent(${CONTEXT},${DESTINATION_ACTIVITY}.class);
                 startActivity(${INTENT_ID});
             }
         });

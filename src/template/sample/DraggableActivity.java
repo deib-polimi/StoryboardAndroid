@@ -564,7 +564,7 @@ public class DraggableActivity extends AnchorPane{
     public void setFragmentInspector(boolean isFragment){};
     public DraggableActivity getContainerActivity(DraggableActivity fragment){
         for (Intent i : getIngoingIntents()){
-            if(i.getType() == IntentType.tabIntent){
+            if(i.getType() == IntentType.tabIntent || i.getType() == IntentType.bottomNavigIntent){
                 return i.getBelongingLink().getSource();
             }
         }

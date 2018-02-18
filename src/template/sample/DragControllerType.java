@@ -7,5 +7,6 @@ public enum DragControllerType {
     emptyActivity,
     basicActivity,
     loginActivity,
-    tabbedActivity
+    tabbedActivity,
+    bottomNavigationActivity
 }

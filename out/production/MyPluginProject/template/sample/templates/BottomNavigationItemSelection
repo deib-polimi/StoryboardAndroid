@@ -1,0 +1,3 @@
+case R.id.navigation_${ITEM_ID}:
+    transaction.replace(R.id.content,new ${FRAGMENT}()).commit();
+    return true;

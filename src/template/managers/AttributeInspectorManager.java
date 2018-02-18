@@ -40,7 +40,54 @@ public class AttributeInspectorManager {
     public void loadActivityInspector (Node activityInspector,DraggableActivity activity){
         //clean attribute inspector
         cleanAttributeInspector();
-        if(activity.getType()!= DragControllerType.tabbedActivity){
+        //create tab
+        Tab activityTab = new Tab("Activity");
+        Tab intentTab = new Tab ("Intent");
+        //populate tabs
+        if(activity.isFragment()){
+            //if activity is fragment, populate attribute inspector with a VBOX containing
+            //the fragment inspector and the inspector of the relative tab intent
+            VBox fragmentInspectorList = new VBox();
+            fragmentInspectorList.getChildren().add(activityInspector);
+            for (Intent i : activity.getIngoingIntents()){
+                if (i.getType()==IntentType.tabIntent || i.getType()==IntentType.bottomNavigIntent){
+                    fragmentInspectorList.getChildren().add(i.getIntentInspector());
+                }
+            }
+            activityTab.setContent(fragmentInspectorList);
+
+        }else{
+            activityTab.setContent(activityInspector);
+        }
+
+        if(activity.getIntents().size()>0){
+            if(activity.getType()!= DragControllerType.tabbedActivity && activity.getType()!= DragControllerType.bottomNavigationActivity){
+                VBox intentInspectorsList = new VBox();
+                for(Intent i : activity.getOutgoingIntents()) {
+                    //create inspector section for each intent of the activity
+                    intentInspectorsList.getChildren().add(i.getIntentInspector());
+                    intentInspectorsList.getChildren().add(new Separator());
+                }
+                intentTab.setContent(intentInspectorsList);
+
+            }else{
+                VBox tabsInspectorsList = new VBox();
+                for(Intent i : activity.getOutgoingIntents()){
+                    //create inspector section for each tab of the activity
+                    tabsInspectorsList.getChildren().add(new Label("Content: "+i.getBelongingLink().getTarget().getName()));
+                    tabsInspectorsList.getChildren().add(i.getIntentInspector());
+                    tabsInspectorsList.getChildren().add(new Separator());
+
+                }
+                intentTab.setContent(tabsInspectorsList);
+            }
+
+        }
+        //load tabs to attribute inspector
+        attributeInspector.getTabs().add(activityTab);
+        attributeInspector.getTabs().add(intentTab);
+
+        /*if(activity.getType()!= DragControllerType.tabbedActivity && activity.getType()!= DragControllerType.bottomNavigationActivity){
             //create tab
             Tab activityTab = new Tab("Activity");
             Tab intentTab = new Tab ("Intent");
@@ -51,7 +98,7 @@ public class AttributeInspectorManager {
                 VBox fragmentInspectorList = new VBox();
                 fragmentInspectorList.getChildren().add(activityInspector);
                 for (Intent i : activity.getIngoingIntents()){
-                    if (i.getType()==IntentType.tabIntent){
+                    if (i.getType()==IntentType.tabIntent || i.getType()==IntentType.bottomNavigIntent){
                         fragmentInspectorList.getChildren().add(i.getIntentInspector());
                     }
                 }
@@ -81,6 +128,7 @@ public class AttributeInspectorManager {
             if(activity.getIntents().size()>0){
                 for(Intent i : activity.getOutgoingIntents()){
                     //create inspector section for each tab of the activity
+                    tabsInspectorsList.getChildren().add(new Label("Content: "+i.getBelongingLink().getTarget().getName()));
                     tabsInspectorsList.getChildren().add(i.getIntentInspector());
                     tabsInspectorsList.getChildren().add(new Separator());
 
@@ -88,17 +136,25 @@ public class AttributeInspectorManager {
             }
             activityTab.setContent(tabsInspectorsList);
             attributeInspector.getTabs().add(activityTab);
-        }
+        }*/
 
 
     }
-    public void loadIntentInspector (Node intentInspector){
+    public void loadIntentInspector (Node intentInspector,Intent intent){
         //clean attribute inspector
         cleanAttributeInspector();
         //create tabs
         Tab intentTab = new Tab ("Intents");
         //populate tabs
-        intentTab.setContent(intentInspector);
+        if(intent.getType() ==IntentType.tabIntent || intent.getType() ==IntentType.bottomNavigIntent){
+            VBox tabIntentList = new VBox();
+            tabIntentList.getChildren().add(new Label("Content: "+intent.getBelongingLink().getTarget().getName()));
+            tabIntentList.getChildren().add(intentInspector);
+            intentTab.setContent(tabIntentList);
+        }else{
+            intentTab.setContent(intentInspector);
+        }
+
         //load tabs to attribute inspector
         attributeInspector.getTabs().add(intentTab);
 

@@ -16,6 +16,7 @@ import template.managers.StructureTreeManager;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -440,7 +441,7 @@ public class RootLayout extends AnchorPane{
                     //la posizione di arrow e icone intents quando sposto activity nel grafo
                     target.addAnchoredLink(link);
                     source.addAnchoredLink(link);
-                    if(intentType == IntentType.tabIntent){
+                    if(intentType == IntentType.tabIntent || intentType == IntentType.bottomNavigIntent){
                         target.setFragment(true);
                     }
                     treeManager.addLinkToTree(link,source,target);
@@ -494,12 +495,22 @@ public class RootLayout extends AnchorPane{
     public void generateCode() throws IOException {
         CodeGenerator codeGenerator = new CodeGenerator();
         List<DraggableActivity> activities = StructureTreeManager.getInstance().getActivitiesFromTree();
+        List<BottomNavigationActivity> bottomNavigationActivities = new ArrayList<BottomNavigationActivity>();
         //generate java file and xml file for all the activities
         for(DraggableActivity a : activities){
             codeGenerator.generateCode(a);
+            if (a.getType() == DragControllerType.bottomNavigationActivity){
+                bottomNavigationActivities.add((BottomNavigationActivity) a);
+            }
         }
         //register activities in Android Manifest
         codeGenerator.generateManifest(activities);
+        //generate navigation menu containing the declarations of the items
+        //of all bottom navigation activities
+        if(bottomNavigationActivities.size()>0){
+            codeGenerator.generateNavigationMenu(bottomNavigationActivities);
+        }
+
     }
 
     private Intent createIntentByType(CubicCurve curve,float t, double radius, IntentType type) throws IOException {
@@ -520,6 +531,10 @@ public class RootLayout extends AnchorPane{
 
             case tabIntent:
                 intent = new TabIntent(curve,t,radius,type);
+                break;
+
+            case bottomNavigIntent:
+                intent = new BottomNavigationIntent(curve,t,radius,type);
                 break;
 
             default:
@@ -546,6 +561,10 @@ public class RootLayout extends AnchorPane{
 
             case tabbedActivity:
                 activity = new TabbedActivity();
+                break;
+
+            case bottomNavigationActivity:
+                activity = new BottomNavigationActivity();
                 break;
 
             default:

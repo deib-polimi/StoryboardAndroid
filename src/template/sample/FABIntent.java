@@ -35,12 +35,19 @@ public class FABIntent extends Intent {
     public void loadAttributeInspector(){
         AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
         intentInspector.fillValues(this);
-        inspectorManager.loadIntentInspector(intentInspector);
+        inspectorManager.loadIntentInspector(intentInspector,this);
     }
     public String getIntentCode(){
         String template = classTemplate;
         template = template.replace("${INTENT_ID}",super.getName());
         template = template.replace("${DESTINATION_ACTIVITY}",super.getBelongingLink().getTarget().getName());
+        if(super.getBelongingLink().getSource().isFragment()){
+            template = template.replace("${GET_VIEW}","view.");
+            template = template.replace("${CONTEXT}","getActivity()");
+        }else{
+            template = template.replace("${GET_VIEW}","");
+            template = template.replace("${CONTEXT}","getApplicationContext()");
+        }
         return template;
     }
     public String getIntentLayoutCode(){

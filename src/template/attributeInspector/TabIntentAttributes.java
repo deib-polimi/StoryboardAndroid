@@ -21,8 +21,6 @@ import java.util.List;
  */
 public class TabIntentAttributes extends IntentAttributes {
     @FXML
-    private Label content_label;
-    @FXML
     private TextField tab_text;
     @FXML
     private ChoiceBox<Integer> choice_box_order;
@@ -49,7 +47,6 @@ public class TabIntentAttributes extends IntentAttributes {
     }
 
     public void fillValues(TabIntent intent){
-        content_label.setText(intent.getBelongingLink().getTarget().getName());
         tab_text.setText(intent.getName());
         container =(TabbedActivity)intent.getBelongingLink().getSource();
         container.updateTabs();

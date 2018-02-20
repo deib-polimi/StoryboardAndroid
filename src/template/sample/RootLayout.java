@@ -537,6 +537,10 @@ public class RootLayout extends AnchorPane{
                 intent = new BottomNavigationIntent(curve,t,radius,type);
                 break;
 
+            case itemClick:
+                intent = new AdapterViewItemClick(curve,t,radius,type);
+                break;
+
             default:
                 break;
         }
@@ -565,6 +569,14 @@ public class RootLayout extends AnchorPane{
 
             case bottomNavigationActivity:
                 activity = new BottomNavigationActivity();
+                break;
+
+            case listView:
+                activity = new ListViewActivity();
+                break;
+
+            case gridView:
+                activity = new GridViewActivity();
                 break;
 
             default:

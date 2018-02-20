@@ -1,0 +1,56 @@
+package ${PACKAGE}.adapter;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+import java.util.List;
+import ${PACKAGE}.R;
+
+public class ${ACTIVITY_NAME}Adapter extends ArrayAdapter<${ACTIVITY_NAME}Model> {
+
+    public ${ACTIVITY_NAME}Adapter(Context context, List<${ACTIVITY_NAME}Model> elementsList){
+        super(context, 0, elementsList);
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent){
+
+        ${ACTIVITY_NAME}Model item = getItem(position);
+        ViewHolder viewHolder;
+
+        if (convertView == null) {
+            LayoutInflater layoutInflater = (LayoutInflater) getContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            convertView = layoutInflater.inflate(R.layout.${ITEM_LAYOUT}, null);
+
+            viewHolder = new ViewHolder(convertView);
+            convertView.setTag(viewHolder);
+        }
+        else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+
+        viewHolder.titleTextView.setText(item.getTitle());
+        viewHolder.subtitleTextView.setText(item.getSubtitle());
+
+        return convertView;
+    }
+
+    static class ViewHolder {
+
+        TextView titleTextView;
+        TextView subtitleTextView;
+
+        public ViewHolder(View view){
+            titleTextView = (TextView) view.
+                    findViewById(R.id.title);
+            subtitleTextView = (TextView) view.
+                    findViewById(R.id.subtitle);
+        }
+
+    }
+}

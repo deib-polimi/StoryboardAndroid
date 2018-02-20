@@ -89,6 +89,10 @@ public class Intent extends Circle{
                 image= new Image(getClass().getResource("/img/listview.png").toString());
                 break;
 
+            case itemClick:
+                image= new Image(getClass().getResource("/img/listview.png").toString());
+                break;
+
         }
         return image;
     }

@@ -365,4 +365,62 @@ public class CodeGenerator {
         return template;
     }
 
+    public void generateJavaFile(String path,String content) throws IOException {
+        ProjectHandler projectHandler = ProjectHandler.getInstance();
+        //create java file
+
+        File f = new File(path);
+        f.getParentFile().mkdirs();
+        f.createNewFile();
+        //write code in java file
+        BufferedWriter writer = new BufferedWriter(
+                new FileWriter( path));
+        /*BufferedWriter writer = new BufferedWriter(
+                new FileWriter( "C:/Users/utente/Desktop/"+activity.getName()+".java"));*/
+
+        writer.write(content);
+        //writer.write(activity.createJavaCode());
+        if ( writer != null)
+            writer.close( );
+
+        List<String> wellFormedOut =wellFormedJavaCode(path);
+        writer = new BufferedWriter(
+                new FileWriter( path));
+        for(String line: wellFormedOut){
+            writer.write(line);
+            writer.newLine();
+        }
+        if ( writer != null)
+            writer.close( );
+    }
+
+    public void generateXMLFile(String path,String content) throws IOException {
+        ProjectHandler projectHandler = ProjectHandler.getInstance();
+        //create java file
+
+        File f = new File(path);
+        f.getParentFile().mkdirs();
+        f.createNewFile();
+        //write code in java file
+        BufferedWriter writer = new BufferedWriter(
+                new FileWriter( path));
+        /*BufferedWriter writer = new BufferedWriter(
+                new FileWriter( "C:/Users/utente/Desktop/"+activity.getName()+".java"));*/
+
+        writer.write(content);
+        //writer.write(activity.createJavaCode());
+        if ( writer != null)
+            writer.close( );
+
+        List<String> wellFormedOut =wellFormedXMLCode(path);
+        writer = new BufferedWriter(
+                new FileWriter( path));
+        for(String line: wellFormedOut){
+            writer.write(line);
+            writer.newLine();
+        }
+        if ( writer != null)
+            writer.close( );
+    }
+
 }

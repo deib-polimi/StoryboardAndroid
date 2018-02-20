@@ -8,5 +8,7 @@ public enum DragControllerType {
     basicActivity,
     loginActivity,
     tabbedActivity,
-    bottomNavigationActivity
+    bottomNavigationActivity,
+    listView,
+    gridView
 }

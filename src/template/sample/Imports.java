@@ -8,4 +8,5 @@ public interface Imports {
     String VIEW ="import android.view.View;";
     String INTENT ="import android.content.Intent;";
     String FAB ="import android.support.design.widget.FloatingActionButton;";
+    String ADAPTER_VIEW ="import android.widget.AdapterView;";
 }

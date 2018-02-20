@@ -8,5 +8,6 @@ public enum IntentType {
     fabClick,
     loginClick,
     tabIntent,
-    bottomNavigIntent
+    bottomNavigIntent,
+    itemClick
 }

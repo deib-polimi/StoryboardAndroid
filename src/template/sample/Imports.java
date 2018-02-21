@@ -9,4 +9,5 @@ public interface Imports {
     String INTENT ="import android.content.Intent;";
     String FAB ="import android.support.design.widget.FloatingActionButton;";
     String ADAPTER_VIEW ="import android.widget.AdapterView;";
+    String CLICK_LISTENER="import ${PACKAGE}.adapter.${ACTIVITY_NAME}ClickListener;";
 }

@@ -2,6 +2,7 @@ package template.attributeInspector;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -26,6 +27,8 @@ public class ButtonClickIntentAttributes extends IntentAttributes {
     private TextField button_id_txt;
     @FXML
     private TextField button_txt;
+    @FXML
+    private ChoiceBox<String> extra_box;
 
     public ButtonClickIntentAttributes() {
         FXMLLoader fxmlLoader = new FXMLLoader(

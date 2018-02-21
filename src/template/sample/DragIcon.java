@@ -79,6 +79,10 @@ public class DragIcon extends AnchorPane {
                 icon_image.setImage(new Image(getClass().getResource("/img/listview.png").toString()));
                 break;
 
+            case cardView:
+                icon_image.setImage(new Image(getClass().getResource("/img/listview.png").toString()));
+                break;
+
             default:
                 break;
         }

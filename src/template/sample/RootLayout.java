@@ -545,6 +545,10 @@ public class RootLayout extends AnchorPane{
                 intent = new AdapterViewItemClick(curve,t,radius,type);
                 break;
 
+            case cardClick:
+                intent = new CardViewItemClick(curve,t,radius,type);
+                break;
+
             default:
                 break;
         }
@@ -581,6 +585,10 @@ public class RootLayout extends AnchorPane{
 
             case gridView:
                 activity = new GridViewActivity();
+                break;
+
+            case cardView:
+                activity = new CardViewActivity();
                 break;
 
             default:

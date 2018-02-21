@@ -18,6 +18,7 @@ public class ButtonClickIntent extends Intent {
     private CodeGenerator codeGenerator = new CodeGenerator();
     private String classTemplate;
     private String layoutTemplate;
+    private Extras extraType;
 
     public ButtonClickIntent(CubicCurve curve, float t, double radius, IntentType type) throws IOException {
         super(curve, t, radius, type);
@@ -25,6 +26,7 @@ public class ButtonClickIntent extends Intent {
         this.intentInspector = new ButtonClickIntentAttributes();
         super.setName("newIntent");
         buttonId = "newButton";
+        extraType = Extras.None;
         buttonText="";
         classTemplate = codeGenerator.provideTemplateForName("templates/ButtonClickTemplate");
         layoutTemplate = codeGenerator.provideTemplateForName("templates/ButtonLayoutTemplate");

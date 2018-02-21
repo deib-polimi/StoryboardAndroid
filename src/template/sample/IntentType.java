@@ -9,5 +9,6 @@ public enum IntentType {
     loginClick,
     tabIntent,
     bottomNavigIntent,
-    itemClick
+    itemClick,
+    cardClick
 }

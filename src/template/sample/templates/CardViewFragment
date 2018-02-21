@@ -1,0 +1,42 @@
+package ${PACKAGE};
+
+import android.support.v4.app.Fragment;
+import android.os.Bundle;
+import android.support.v7.widget.${TYPE}LayoutManager;
+import android.support.v7.widget.RecyclerView;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import ${PACKAGE}.adapter.${ACTIVITY_NAME}Model;
+import ${PACKAGE}.adapter.${ACTIVITY_NAME}Adapter;
+${IMPORTS}
+public class ${ACTIVITY_NAME} extends Fragment {
+
+   @Override
+   	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.${ACTIVITY_LAYOUT}, container, false);
+        ${FAB}
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+
+        recyclerView.setHasFixedSize(true);
+        ${ON_CLICK}
+        ${TYPE}LayoutManager layoutManager = new ${TYPE}LayoutManager(getActivity()${COLUMNS});
+        recyclerView.setLayoutManager(layoutManager);
+
+        List<${ACTIVITY_NAME}Model> cardsList = Collections.
+                synchronizedList(new ArrayList<${ACTIVITY_NAME}Model>());
+        for (int i = 1; i <= 20; i++){
+
+            ${ACTIVITY_NAME}Model card = new ${ACTIVITY_NAME}Model();
+            cardsList.add(card);
+        }
+
+        ${ACTIVITY_NAME}Adapter adapter = new ${ACTIVITY_NAME}Adapter(cardsList);
+        recyclerView.setAdapter(adapter);
+
+        return view;
+    }
+}

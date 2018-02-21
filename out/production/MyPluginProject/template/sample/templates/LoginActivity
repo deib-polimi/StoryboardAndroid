@@ -113,7 +113,7 @@ public class ${ACTIVITY_NAME} extends AppCompatActivity implements LoaderCallbac
             return true;
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(mEmailView, "Contacts permissions are needed for providing email completions", Snackbar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok, new View.OnClickListener() {
                         @Override
                         @TargetApi(Build.VERSION_CODES.M)
@@ -164,18 +164,18 @@ public class ${ACTIVITY_NAME} extends AppCompatActivity implements LoaderCallbac
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
+            mPasswordView.setError("This password is too short");
             focusView = mPasswordView;
             cancel = true;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
+            mEmailView.setError("This field is required");
             focusView = mEmailView;
             cancel = true;
         } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
+            mEmailView.setError("This email address is invalid");
             focusView = mEmailView;
             cancel = true;
         }
@@ -339,7 +339,7 @@ public class ${ACTIVITY_NAME} extends AppCompatActivity implements LoaderCallbac
                 ${INTENT}
                 finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.setError("This password is incorrect");
                 mPasswordView.requestFocus();
             }
         }

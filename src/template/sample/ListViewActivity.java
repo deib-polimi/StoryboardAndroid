@@ -6,10 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.MenuItem;
 import template.ProjectHandler;
-import template.attributeInspector.BottomNavigationActivityAttributes;
-import template.attributeInspector.EmptyActivityAttributes;
-import template.attributeInspector.FragmentAttributes;
-import template.attributeInspector.ListViewAttributes;
+import template.attributeInspector.*;
 import template.managers.AttributeInspectorManager;
 
 import java.io.IOException;
@@ -29,8 +26,10 @@ public class ListViewActivity extends DraggableActivity {
     private String rowArrayTemplate;
     private String modelTemplate;
     private String rowCustomTemplate;
+    private String classCustomFragment;
+    private String classArrayFragment;
     private ListViewAttributes activityInspector= null;
-    private FragmentAttributes fragmentInspector = null;
+    private ListViewFragmentAttributes fragmentInspector = null;
     private CodeGenerator codeGenerator = new CodeGenerator();
     private String adapterType;
 
@@ -38,11 +37,13 @@ public class ListViewActivity extends DraggableActivity {
         super();
         //get activity and layout templates in String
         classCustomTemplate = codeGenerator.provideTemplateForName("templates/ListViewCustomAdapterActivity");
+        classCustomFragment = codeGenerator.provideTemplateForName("templates/ListViewCustomAdapterFragment");
         layoutTemplate = codeGenerator.provideTemplateForName("templates/ListViewLayout");
         customAdapterTemplate = codeGenerator.provideTemplateForName("templates/CustomAdapter");
         modelTemplate = codeGenerator.provideTemplateForName("templates/CustomAdapterModel");
         rowCustomTemplate = codeGenerator.provideTemplateForName("templates/AdapterViewCustomItem");
         classArrayTemplate = codeGenerator.provideTemplateForName("templates/ListViewArrayAdapterActivity");
+        classArrayFragment = codeGenerator.provideTemplateForName("templates/ListViewArrayAdapterFragment");
         rowArrayTemplate = codeGenerator.provideTemplateForName("templates/AdapterViewArrayItem");
 
         FXMLLoader fxmlLoader = new FXMLLoader(
@@ -69,7 +70,7 @@ public class ListViewActivity extends DraggableActivity {
     private void initialize() {
         super.init();
         activityInspector = new ListViewAttributes();
-        fragmentInspector = new FragmentAttributes();
+        fragmentInspector = new ListViewFragmentAttributes();
         super.setName("NewListView");
         adapterType = "String";
         loadInspector();
@@ -123,36 +124,45 @@ public class ListViewActivity extends DraggableActivity {
         return template;
     }
 
-    //@Override
-    /*public String createFragmentCode() throws IOException {
-        String template = fragmentTemplate;
+    @Override
+    public String createFragmentCode() throws IOException {
+        String template = null;
         String imports = "";
-        String declarations = "";
-        String setViews = "";
-        String intent = "";
-        //create code of the button click intents outgoing from the activity
-        if (super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0){
-            //set imports
-            imports =imports.concat(Imports.BUTTON+"\n");
-            imports = imports.concat(Imports.INTENT+"\n");
-            for(Intent i : super.getOutgoingIntentsForType(IntentType.buttonClick)){
-                //set buttons declarations
-                declarations = declarations.concat("private Button "+((ButtonClickIntent)i).getButtonId()+";\n");
-                setViews = setViews.concat(((ButtonClickIntent)i).getButtonId()+" = (Button) view.findViewById(R.id."
-                        +((ButtonClickIntent)i).getButtonId()+"_button);\n");
-                intent = intent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
-            }
+        String itemClick = "";
+        if (adapterType.equals("Custom")){
+            template = classCustomFragment;
+            generateAdapter();
+            generateModel();
+        }else if(adapterType.equals("String")){
+            template = classArrayFragment;
         }
-
-        template = template.replace("${IMPORTS}",imports);
-        template = template.replace("${DECLARATIONS}",declarations);
-        template = template.replace("${SET_VIEWS}",setViews);
-        template = template.replace("${BUTTON_CLICK_INTENT}",intent);
         template = template.replace("${ACTIVITY_NAME}",super.getName());
         template = template.replace("${ACTIVITY_LAYOUT}",generateLayoutName(super.getName()));
-        template = template.replace("${PACKAGE}",ProjectHandler.getInstance().getPackage());
+        template = template.replace("${PACKAGE}", ProjectHandler.getInstance().getPackage());
+        //check if there is a fab intent
+        String fabIntent="";
+        if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0){
+
+            Intent intent = super.getOutgoingIntentsForType(IntentType.fabClick).get(0);
+            fabIntent = fabIntent.concat("\n"+((FABIntent)intent).getIntentCode()+"\n");
+            imports = imports.concat(Imports.FAB);
+
+        }
+        template = template.replace("${FAB}",fabIntent);
+        if(super.getOutgoingIntentsForType(IntentType.itemClick).size()>0){
+            imports = imports.concat(Imports.ADAPTER_VIEW);
+            Intent intent = super.getOutgoingIntentsForType(IntentType.itemClick).get(0);
+            itemClick = itemClick.concat(((AdapterViewItemClick)intent).getIntentCode());
+
+        }
+        if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0 ||
+                super.getOutgoingIntentsForType(IntentType.itemClick).size()>0){
+            imports = imports.concat(Imports.INTENT);
+        }
+        template = template.replace("${IMPORTS}","\n"+imports+"\n");
+        template = template.replace("${INTENT}","\n"+itemClick+"\n");
         return template;
-    }*/
+    }
 
     public void generateAdapter() throws IOException {
         String template = customAdapterTemplate;

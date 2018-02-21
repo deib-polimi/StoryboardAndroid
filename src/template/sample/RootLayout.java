@@ -441,8 +441,12 @@ public class RootLayout extends AnchorPane{
                     //la posizione di arrow e icone intents quando sposto activity nel grafo
                     target.addAnchoredLink(link);
                     source.addAnchoredLink(link);
-                    if(intentType == IntentType.tabIntent || intentType == IntentType.bottomNavigIntent){
+                    if(intentType == IntentType.tabIntent){
                         target.setFragment(true);
+                        ((TabbedActivity)source).addTab((TabIntent)intent);
+                    }else if (intentType == IntentType.bottomNavigIntent){
+                        target.setFragment(true);
+                        ((BottomNavigationActivity)source).addTab((BottomNavigationIntent) intent);
                     }
                     treeManager.addLinkToTree(link,source,target);
                     intent.loadAttributeInspector();

@@ -49,7 +49,7 @@ public class TabIntentAttributes extends IntentAttributes {
     public void fillValues(TabIntent intent){
         tab_text.setText(intent.getName());
         container =(TabbedActivity)intent.getBelongingLink().getSource();
-        container.updateTabs();
+        //container.updateTabs();
         int order = container.getOrder(intent)+1;
         ObservableList<Integer> tabNum = FXCollections.observableArrayList();
         for (int i =1; i<= container.getTabs().size();i++){

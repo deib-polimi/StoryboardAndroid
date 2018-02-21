@@ -61,7 +61,7 @@ public class BottomNavigationActivity extends DraggableActivity {
     public void setTabs(List<BottomNavigationIntent> tabs) {
         this.tabs = tabs;
     }
-    public void updateTabs(){
+    /*public void updateTabs(){
         List<BottomNavigationIntent> updatedTabs = new ArrayList<BottomNavigationIntent>();
         //get current tabs
         for (Intent i : super.getOutgoingIntentsForType(IntentType.bottomNavigIntent)){
@@ -79,6 +79,13 @@ public class BottomNavigationActivity extends DraggableActivity {
                 tabs.add(i);
             }
         }
+    }*/
+    public void removeTab(BottomNavigationIntent tab){
+        tabs.remove(tab);
+    }
+
+    public void addTab(BottomNavigationIntent tab){
+        tabs.add(tab);
     }
     public int getOrder(BottomNavigationIntent tab){
         int order = tabs.indexOf(tab);

@@ -546,8 +546,9 @@ public class DraggableActivity extends AnchorPane{
             //if fragment was initial activity, select its container application as new initial activity
             if(IsInitialActivity.getInstance().isInitialActivity(this)){
                 isInitialActivity(false);
+                IsInitialActivity.getInstance().setInitialActivity(getContainerActivity(this));
             }
-            IsInitialActivity.getInstance().setInitialActivity(getContainerActivity(this));
+
 
         }
 

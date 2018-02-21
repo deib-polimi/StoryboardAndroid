@@ -61,7 +61,7 @@ public class TabbedActivity extends DraggableActivity {
     public void setTabs(List<TabIntent> tabs) {
         this.tabs = tabs;
     }
-    public void updateTabs(){
+    /*public void updateTabs(){
         List<TabIntent> updatedTabs = new ArrayList<TabIntent>();
         //get current tabs
         for (Intent i : super.getOutgoingIntentsForType(IntentType.tabIntent)){
@@ -79,18 +79,15 @@ public class TabbedActivity extends DraggableActivity {
                 tabs.add(i);
             }
         }
-        //set new list order
-        /*int pos = 0;
-        for (TabIntent i : tabs){
-            if(updatedTabs.contains(i)){
-                int correctPosition = tabs.indexOf(i);
-                int currentPosition = updatedTabs.indexOf(i);
-                if(currentPosition!=correctPosition){
-                    TabIntent intent = updatedTabs.get(correctPosition);
-                    updatedTabs.
-                }
-            }
-        }*/
+
+
+    }*/
+    public void removeTab(TabIntent tab){
+        tabs.remove(tab);
+    }
+
+    public void addTab(TabIntent tab){
+        tabs.add(tab);
     }
     public int getOrder(TabIntent tab){
         int order = tabs.indexOf(tab);

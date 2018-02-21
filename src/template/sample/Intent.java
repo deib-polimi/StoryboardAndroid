@@ -149,8 +149,12 @@ public class Intent extends Circle{
     }
 
     public void delete (){
-        if(type ==IntentType.tabIntent ||type ==IntentType.tabIntent){
+        if(type ==IntentType.tabIntent){
             belongingLink.getTarget().setFragment(false);
+            ((TabbedActivity)belongingLink.getSource()).removeTab((TabIntent) this);
+        }else if (type ==IntentType.bottomNavigIntent){
+            belongingLink.getTarget().setFragment(false);
+            ((BottomNavigationActivity)belongingLink.getSource()).removeTab((BottomNavigationIntent) this);
         }
         //remove intent from graph
         AnchorPane parent  = (AnchorPane) this.getParent();

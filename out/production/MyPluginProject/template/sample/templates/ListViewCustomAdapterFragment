@@ -1,0 +1,45 @@
+package ${PACKAGE};
+
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+${IMPORTS}
+import ${PACKAGE}.adapter.${ACTIVITY_NAME}Model;
+import ${PACKAGE}.adapter.${ACTIVITY_NAME}Adapter;
+
+public class ${ACTIVITY_NAME} extends Fragment {
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.${ACTIVITY_LAYOUT}, container, false);
+        ${FAB}
+        setupView(view);
+        return view;
+    }
+
+    private void setupView(View view){
+
+            final List<${ACTIVITY_NAME}Model> rowsList = Collections.
+                    synchronizedList(new ArrayList<${ACTIVITY_NAME}Model>());
+
+            for (int i = 1; i <= 20; i++){
+
+                ${ACTIVITY_NAME}Model row = new ${ACTIVITY_NAME}Model("Title "+Integer.toString(i),"Subtitle "+Integer.toString(i));
+                rowsList.add(row);
+            }
+
+            ListView listView = (ListView) view.findViewById(R.id.listview);
+            ${ACTIVITY_NAME}Adapter adapter = new ${ACTIVITY_NAME}Adapter(getActivity(), rowsList);
+            listView.setAdapter(adapter);
+            ${INTENT}
+        }
+}

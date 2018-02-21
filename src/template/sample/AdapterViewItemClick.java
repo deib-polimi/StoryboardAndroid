@@ -39,9 +39,9 @@ public class AdapterViewItemClick extends Intent {
     public String getIntentCode(){
         String template = classTemplate;
 
-        if(super.getBelongingLink().getTarget().getType() == DragControllerType.listView){
+        if(super.getBelongingLink().getSource().getType() == DragControllerType.listView){
             template = template.replace("${ADAPTER_VIEW}","listView");
-        }else if(super.getBelongingLink().getTarget().getType() == DragControllerType.gridView){
+        }else if(super.getBelongingLink().getSource().getType() == DragControllerType.gridView){
             template = template.replace("${ADAPTER_VIEW}","gridView");
         }
         template = template.replace("${DESTINATION_ACTIVITY}",super.getBelongingLink().getTarget().getName());

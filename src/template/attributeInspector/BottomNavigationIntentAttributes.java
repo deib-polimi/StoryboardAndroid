@@ -81,7 +81,6 @@ public class BottomNavigationIntentAttributes extends IntentAttributes {
     public void fillValues(BottomNavigationIntent intent){
         tab_text.setText(intent.getName());
         container =(BottomNavigationActivity)intent.getBelongingLink().getSource();
-        container.updateTabs();
         int order = container.getOrder(intent)+1;
         ObservableList<Integer> tabNum = FXCollections.observableArrayList();
         for (int i =1; i<= container.getTabs().size();i++){

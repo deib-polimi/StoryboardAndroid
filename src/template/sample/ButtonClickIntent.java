@@ -18,7 +18,10 @@ public class ButtonClickIntent extends Intent {
     private CodeGenerator codeGenerator = new CodeGenerator();
     private String classTemplate;
     private String layoutTemplate;
-    private Extras extraType;
+    private String extraTemplate;
+    private String extraReceiverTemplate;
+    private String extraType;
+    private String extraId;
 
     public ButtonClickIntent(CubicCurve curve, float t, double radius, IntentType type) throws IOException {
         super(curve, t, radius, type);
@@ -26,11 +29,31 @@ public class ButtonClickIntent extends Intent {
         this.intentInspector = new ButtonClickIntentAttributes();
         super.setName("newIntent");
         buttonId = "newButton";
-        extraType = Extras.None;
+        extraType = "None";
         buttonText="";
         classTemplate = codeGenerator.provideTemplateForName("templates/ButtonClickTemplate");
         layoutTemplate = codeGenerator.provideTemplateForName("templates/ButtonLayoutTemplate");
+        extraTemplate =codeGenerator.provideTemplateForName("templates/IntentExtra");
+        extraReceiverTemplate =codeGenerator.provideTemplateForName("templates/IntentExtraReceiver");
+
         intentInspector.createListeners(this);
+    }
+
+    public String getExtraId() {
+        return extraId;
+    }
+
+    public void setExtraId(String extraId) {
+        this.extraId = extraId;
+    }
+
+    @Override
+    public String getExtraType() {
+        return extraType;
+    }
+
+    public void setExtraType(String extraType) {
+        this.extraType = extraType;
     }
 
     public String getButtonId() {
@@ -60,7 +83,7 @@ public class ButtonClickIntent extends Intent {
         intentInspector.fillValues(this);
         inspectorManager.loadIntentInspector(intentInspector,this);
     }
-    public String getIntentCode(){
+    public String getIntentCode(int nID){
         String template = classTemplate;
         template = template.replace("${BUTTON_ID}",buttonId);
         template = template.replace("${INTENT_ID}",super.getName());
@@ -70,7 +93,46 @@ public class ButtonClickIntent extends Intent {
         }else{
             template = template.replace("${CONTEXT}","getApplicationContext()");
         }
+
+        //intent extra
+        if(!extraType.equals("None")){
+            String extra = extraTemplate;
+            extra = extra.replace("${TYPE}",super.convertExtraType(extraType));
+            extra = extra.replace("${CONTENT}",super.getExtraValue(extraType));
+            extra = extra.replace("${N}",Integer.toString(nID));
+            template = template.replace("${EXTRA}","\n"+extra+"\n");
+            extraId ="EXTRA_MESSAGE"+Integer.toString(nID);
+        }else{
+            template = template.replace("${EXTRA}","");
+        }
+
         return template;
+    }
+
+    public String getExtraIdDeclaration(int nID){
+        return "public final static String EXTRA_MESSAGE"+Integer.toString(nID)
+                +" = \"Message"+Integer.toString(nID) +" from "+super.getBelongingLink().getSource().getName()+"\";\n";
+    }
+    @Override
+    public String getExtraReceiver(int nID){
+        String template = extraReceiverTemplate;
+        template = template.replace("${TYPE_VAR}",super.convertExtraType(extraType));
+        if(extraType.equals("Integer")){
+            template = template.replace("${TYPE_GET}","Int");
+        }else{
+            template = template.replace("${TYPE_GET}",extraType);
+        }
+        template = template.replace("${EXTRA_ID}",extraId);
+        template = template.replace("${TYPE_GET}",extraType);
+        template = template.replace("${N}",Integer.toString(nID));
+        template = template.replace("${SOURCE}",super.getBelongingLink().getSource().getName());
+        if(extraType.equals("String")){
+            template = template.replace("${DEF_VALUE}","");
+        }else{
+            template = template.replace("${DEF_VALUE}",","+super.getExtraValue(extraType));
+        }
+        return template;
+
     }
     public String getIntentLayoutCode(){
         String template = layoutTemplate;

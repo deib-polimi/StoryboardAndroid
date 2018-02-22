@@ -1,0 +1,1 @@
+${TYPE_VAR} message${N} = intent.get${TYPE_GET}Extra(${SOURCE}.${EXTRA_ID}${DEF_VALUE});

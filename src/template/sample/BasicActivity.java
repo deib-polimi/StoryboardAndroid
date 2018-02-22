@@ -69,22 +69,33 @@ public class BasicActivity extends DraggableActivity {
         String setViews = "";
         String buttonClickintent = "";
         String fabIntent = "";
+        String extraId= "";
         //create code of the button click intents outgoing from the activity
 
         if((super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0)||(super.getOutgoingIntentsForType(IntentType.fabClick).size()>0)){
             imports = imports.concat(Imports.INTENT+"\n");
         }
+        int extraNum = 1;
         if (super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0){
             //set imports
             imports =imports.concat(Imports.BUTTON+"\n");
             for(Intent i : super.getOutgoingIntentsForType(IntentType.buttonClick)){
                 //set buttons declarations
                 declarations = declarations.concat("private Button "+((ButtonClickIntent)i).getButtonId()+";\n");
+                if(!((ButtonClickIntent) i).getExtraType().equals("None")){
+                    extraId = extraId.concat(((ButtonClickIntent)i).getExtraIdDeclaration(extraNum)+"\n");
+                    buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode(extraNum)+"\n");
+                    extraNum++;
+
+                }else{
+                    buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode(0)+"\n");
+                }
+
                 setViews = setViews.concat(((ButtonClickIntent)i).getButtonId()+" = (Button) findViewById(R.id."
                         +((ButtonClickIntent)i).getButtonId()+"_button);\n");
-                buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
             }
         }
+
         if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0){
 
             Intent intent = super.getOutgoingIntentsForType(IntentType.fabClick).get(0);
@@ -96,13 +107,35 @@ public class BasicActivity extends DraggableActivity {
             template = template.replace("${INTENT}",emptyFAB);
         }
 
-        template = template.replace("${IMPORTS}",imports);
+        //intent receivers
+        String receivers = "";
+        int nReceiver = 1;
+        for(Intent i : getIngoingIntents()){
+            if(i.getExtraType()!=null && !i.getExtraType().equals("None")){
+                receivers = receivers.concat(i.getExtraReceiver(nReceiver)+"\n");
+                nReceiver++;
+            }
+        }
+
+
         template = template.replace("${DECLARATIONS}",declarations);
         template = template.replace("${SET_VIEWS}",setViews);
         template = template.replace("${BUTTON_CLICK_INTENT}",buttonClickintent);
         template = template.replace("${ACTIVITY_NAME}",super.getName());
         template = template.replace("${ACTIVITY_LAYOUT}",generateLayoutName(super.getName()));
         template = template.replace("${PACKAGE}", ProjectHandler.getInstance().getPackage());
+
+        template = template.replace("${INTENT_EXTRA_ID}","\n"+extraId);
+        if (!receivers.equals("")){
+            if(super.getOutgoingIntentsForType(IntentType.buttonClick).size()==0){
+                imports = imports = imports.concat(Imports.INTENT+"\n");
+            }
+            template = template.replace("${INTENT_RECEIVER}","Intent intent = getIntent();\n"+receivers);
+        }else{
+            template = template.replace("${INTENT_RECEIVER}",receivers);
+        }
+
+        template = template.replace("${IMPORTS}",imports);
 
         return template;
     }
@@ -115,20 +148,30 @@ public class BasicActivity extends DraggableActivity {
         String setViews = "";
         String buttonClickintent = "";
         String fabIntent = "";
+        String extraId="";
         //create code of the button click intents outgoing from the activity
 
         if((super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0)||(super.getOutgoingIntentsForType(IntentType.fabClick).size()>0)){
             imports = imports.concat(Imports.INTENT+"\n");
         }
+        int extraNum = 1;
         if (super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0){
             //set imports
             imports =imports.concat(Imports.BUTTON+"\n");
             for(Intent i : super.getOutgoingIntentsForType(IntentType.buttonClick)){
                 //set buttons declarations
                 declarations = declarations.concat("private Button "+((ButtonClickIntent)i).getButtonId()+";\n");
+                if(!((ButtonClickIntent) i).getExtraType().equals("None")){
+                    extraId = extraId.concat(((ButtonClickIntent)i).getExtraIdDeclaration(extraNum)+"\n");
+                    buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode(extraNum)+"\n");
+                    extraNum++;
+
+                }else{
+                    buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode(0)+"\n");
+                }
+
                 setViews = setViews.concat(((ButtonClickIntent)i).getButtonId()+" = (Button) view.findViewById(R.id."
                         +((ButtonClickIntent)i).getButtonId()+"_button);\n");
-                buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
             }
         }
         if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0){
@@ -149,6 +192,8 @@ public class BasicActivity extends DraggableActivity {
         template = template.replace("${ACTIVITY_NAME}",super.getName());
         template = template.replace("${ACTIVITY_LAYOUT}",generateLayoutName(super.getName()));
         template = template.replace("${PACKAGE}", ProjectHandler.getInstance().getPackage());
+
+        template = template.replace("${INTENT_EXTRA_ID}","\n"+extraId);
 
         return template;
     }

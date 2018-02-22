@@ -31,15 +31,11 @@
                   </ScrollPane>
               </items>
             </SplitPane>
-            <ScrollPane prefHeight="200.0" prefWidth="200.0">
-               <content>
-                  <AnchorPane fx:id="graph_pane" onMouseClicked="#clearSelections" prefHeight="200.0" prefWidth="200.0">
-                     <children>
-                        <Button fx:id="generate_button" mnemonicParsing="false" onAction="#generateCode" text="Generate Code" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </ScrollPane>
+            <AnchorPane fx:id="graph_pane" onMouseClicked="#clearSelections" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="generate_button" mnemonicParsing="false" onAction="#generateCode" text="Generate Code" />
+               </children>
+            </AnchorPane>
             <AnchorPane fx:id="attribute_inspector_pane" maxWidth="-Infinity" prefHeight="200.0" prefWidth="250.0">
                <children>
                   <TabPane fx:id="attribute_inspector" prefHeight="548.0" prefWidth="250.0" tabClosingPolicy="UNAVAILABLE" />

@@ -3,16 +3,14 @@ package ${PACKAGE};
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 ${IMPORTS}
-
 public class ${ACTIVITY_NAME} extends AppCompatActivity {
 
-    ${DECLARATIONS}
-
+    ${DECLARATIONS}${INTENT_EXTRA_ID}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.${ACTIVITY_LAYOUT});
-
+        ${INTENT_RECEIVER}
         ${SET_VIEWS}
         ${BUTTON_CLICK_INTENT}
     }

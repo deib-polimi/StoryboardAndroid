@@ -187,4 +187,40 @@ public class Intent extends Circle{
     public void loadAttributeInspector(){}
     public IntentAttributes getIntentInspector (){return null;}
 
+    public String convertExtraType(String boxValue){
+        switch(boxValue){
+            case "String" :
+                return "String";
+            case "Boolean" :
+                return "boolean";
+            case "Integer":
+                return "int";
+            case "Float":
+                return "float";
+            case "Double":
+                return "double";
+            default :
+                return null;
+        }
+    }
+    public String getExtraValue(String boxValue){
+        switch(boxValue){
+            case "String" :
+                return "\"Message\"";
+            case "Boolean" :
+                return "true";
+            case "Integer":
+                return "1";
+            case "Float":
+                return "1.0f";
+            case "Double":
+                return "1.0";
+            default :
+                return null;
+        }
+    }
+
+    public String getExtraType( ){return null;}
+    public String getExtraReceiver(int nID){return null;}
+
 }

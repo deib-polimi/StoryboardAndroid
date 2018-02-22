@@ -72,7 +72,6 @@ public class ButtonClickIntentAttributes extends IntentAttributes {
         boxValues.addAll("None","String","Boolean","Integer","Float","Double");
         extra_box.setItems(boxValues);
         extra_box.setValue(intent.getExtraType());
-        target_label.setText(intent.getBelongingLink().getTarget().getName());
     }
 
     public void createListeners(ButtonClickIntent intent){

@@ -12,12 +12,13 @@ import ${PACKAGE}.adapter.${ACTIVITY_NAME}Model;
 import ${PACKAGE}.adapter.${ACTIVITY_NAME}Adapter;
 
 public class ${ACTIVITY_NAME} extends AppCompatActivity {
-
+    ${INTENT_EXTRA_ID}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.${ACTIVITY_LAYOUT});
         ${FAB}
+        ${INTENT_RECEIVER}
         setupView();
     }
 

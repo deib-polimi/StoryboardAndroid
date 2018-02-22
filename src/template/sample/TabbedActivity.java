@@ -116,14 +116,21 @@ public class TabbedActivity extends DraggableActivity {
         String tabs = "";
         String buttonClickintent = "";
         String fabIntent = "";
+        String extraId = "";
         //create code of the button click intents outgoing from the activity
-
         if(super.getOutgoingIntentsForType(IntentType.fabClick).size()>0){
             imports = imports.concat(Imports.INTENT+"\n");
             imports = imports.concat(Imports.FAB+"\n");
             imports = imports.concat(Imports.VIEW+"\n");
             Intent intent = super.getOutgoingIntentsForType(IntentType.fabClick).get(0);
-            fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode());
+            if(!intent.getExtraType().equals("None")){
+                extraId = extraId.concat(((FABIntent)intent).getExtraIdDeclaration()+"\n");
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+"\n");
+
+
+            }else{
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+'\n');
+            }
             template = template.replace("${FAB}",fabIntent);
         }else{
             template = template.replace("${FAB}","");
@@ -133,12 +140,33 @@ public class TabbedActivity extends DraggableActivity {
             tabs = tabs.concat(((TabIntent)i).getIntentCode()+"\n");
         }
 
-        template = template.replace("${IMPORTS}",imports);
+        //intent receivers
+        String receivers = "";
+        int nReceiver = 1;
+        for(Intent i : getIngoingIntents()){
+            if(i.getExtraType()!=null && !i.getExtraType().equals("None")){
+                receivers = receivers.concat(i.getExtraReceiver(nReceiver)+"\n");
+                nReceiver++;
+            }
+        }
+
         template = template.replace("${ACTIVITY_NAME}",super.getName());
         template = template.replace("${ACTIVITY_LAYOUT}",generateLayoutName(super.getName()));
         template = template.replace("${PACKAGE}", ProjectHandler.getInstance().getPackage());
         template = template.replace("${TABS}",tabs);
         template = template.replace("${N_TABS}",Integer.toString(super.getOutgoingIntentsForType(IntentType.tabIntent).size()));
+
+        template = template.replace("${INTENT_EXTRA_ID}","\n"+extraId);
+        if (!receivers.equals("")){
+            if(super.getOutgoingIntentsForType(IntentType.fabClick).size()==0){
+                imports = imports = imports.concat(Imports.INTENT+"\n");
+            }
+            template = template.replace("${INTENT_RECEIVER}","Intent intent = getIntent();\n"+receivers);
+        }else{
+            template = template.replace("${INTENT_RECEIVER}",receivers);
+        }
+
+        template = template.replace("${IMPORTS}",imports);
 
         return template;
     }

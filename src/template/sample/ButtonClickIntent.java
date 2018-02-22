@@ -6,6 +6,8 @@ import template.managers.AttributeInspectorManager;
 import template.managers.StructureTreeManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by utente on 11/02/2018.
@@ -21,7 +23,6 @@ public class ButtonClickIntent extends Intent {
     private String extraTemplate;
     private String extraReceiverTemplate;
     private String extraType;
-    private String extraId;
 
     public ButtonClickIntent(CubicCurve curve, float t, double radius, IntentType type) throws IOException {
         super(curve, t, radius, type);
@@ -37,14 +38,6 @@ public class ButtonClickIntent extends Intent {
         extraReceiverTemplate =codeGenerator.provideTemplateForName("templates/IntentExtraReceiver");
 
         intentInspector.createListeners(this);
-    }
-
-    public String getExtraId() {
-        return extraId;
-    }
-
-    public void setExtraId(String extraId) {
-        this.extraId = extraId;
     }
 
     @Override
@@ -83,7 +76,7 @@ public class ButtonClickIntent extends Intent {
         intentInspector.fillValues(this);
         inspectorManager.loadIntentInspector(intentInspector,this);
     }
-    public String getIntentCode(int nID){
+    public String getIntentCode(){
         String template = classTemplate;
         template = template.replace("${BUTTON_ID}",buttonId);
         template = template.replace("${INTENT_ID}",super.getName());
@@ -99,9 +92,8 @@ public class ButtonClickIntent extends Intent {
             String extra = extraTemplate;
             extra = extra.replace("${TYPE}",super.convertExtraType(extraType));
             extra = extra.replace("${CONTENT}",super.getExtraValue(extraType));
-            extra = extra.replace("${N}",Integer.toString(nID));
+            extra = extra.replace("${N}",Integer.toString(getExtraIndex()));
             template = template.replace("${EXTRA}","\n"+extra+"\n");
-            extraId ="EXTRA_MESSAGE"+Integer.toString(nID);
         }else{
             template = template.replace("${EXTRA}","");
         }
@@ -109,9 +101,9 @@ public class ButtonClickIntent extends Intent {
         return template;
     }
 
-    public String getExtraIdDeclaration(int nID){
-        return "public final static String EXTRA_MESSAGE"+Integer.toString(nID)
-                +" = \"Message"+Integer.toString(nID) +" from "+super.getBelongingLink().getSource().getName()+"\";\n";
+    public String getExtraIdDeclaration(){
+        return "public final static String EXTRA_MESSAGE"+Integer.toString(getExtraIndex())
+                +" = \"Message"+Integer.toString(getExtraIndex()) +" from "+super.getBelongingLink().getSource().getName()+"\";\n";
     }
     @Override
     public String getExtraReceiver(int nID){
@@ -122,7 +114,7 @@ public class ButtonClickIntent extends Intent {
         }else{
             template = template.replace("${TYPE_GET}",extraType);
         }
-        template = template.replace("${EXTRA_ID}",extraId);
+        template = template.replace("${EXTRA_ID}",getExtraId());
         template = template.replace("${TYPE_GET}",extraType);
         template = template.replace("${N}",Integer.toString(nID));
         template = template.replace("${SOURCE}",super.getBelongingLink().getSource().getName());
@@ -139,5 +131,19 @@ public class ButtonClickIntent extends Intent {
         template = template.replace("${BUTTON_ID}",buttonId+"_button");
         template = template.replace("${BUTTON_TXT}",buttonText);
         return template;
+    }
+
+    private int getExtraIndex(){
+        List<Intent> intentExtra = new ArrayList<Intent>();
+        for(Intent i: super.getBelongingLink().getSource().getOutgoingIntents()){
+
+            if(!i.getExtraType().equals("None") && i.getExtraType()!=null ){
+                intentExtra.add(i);
+            }
+        }
+        return intentExtra.indexOf(this);
+    }
+    private String getExtraId(){
+        return "EXTRA_MESSAGE"+Integer.toString(getExtraIndex());
     }
 }

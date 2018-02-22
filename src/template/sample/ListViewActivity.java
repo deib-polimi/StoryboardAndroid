@@ -89,6 +89,7 @@ public class ListViewActivity extends DraggableActivity {
         String template = null;
         String imports = "";
         String itemClick = "";
+        String extraId="";
         if (adapterType.equals("Custom")){
             template = classCustomTemplate;
             generateAdapter();
@@ -104,7 +105,14 @@ public class ListViewActivity extends DraggableActivity {
         if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0){
 
             Intent intent = super.getOutgoingIntentsForType(IntentType.fabClick).get(0);
-            fabIntent = fabIntent.concat("\n"+((FABIntent)intent).getIntentCode()+"\n");
+            if(!intent.getExtraType().equals("None")){
+                extraId = extraId.concat(((FABIntent)intent).getExtraIdDeclaration()+"\n");
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+"\n");
+
+
+            }else{
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+'\n');
+            }
             imports = imports.concat(Imports.FAB);
 
         }
@@ -115,12 +123,34 @@ public class ListViewActivity extends DraggableActivity {
             itemClick = itemClick.concat(((AdapterViewItemClick)intent).getIntentCode());
 
         }
+
+
+        //intent receivers
+        String receivers = "";
+        int nReceiver = 1;
+        for(Intent i : getIngoingIntents()){
+            if(i.getExtraType()!=null && !i.getExtraType().equals("None")){
+                receivers = receivers.concat(i.getExtraReceiver(nReceiver)+"\n");
+                nReceiver++;
+            }
+        }
         if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0 ||
-                super.getOutgoingIntentsForType(IntentType.itemClick).size()>0){
+                super.getOutgoingIntentsForType(IntentType.itemClick).size()>0 ||
+                !receivers.equals("")){
             imports = imports.concat(Imports.INTENT);
         }
-        template = template.replace("${IMPORTS}","\n"+imports+"\n");
+
         template = template.replace("${INTENT}","\n"+itemClick+"\n");
+
+        template = template.replace("${INTENT_EXTRA_ID}","\n"+extraId);
+        if (!receivers.equals("")){
+            template = template.replace("${INTENT_RECEIVER}","Intent intent = getIntent();\n"+receivers);
+        }else{
+            template = template.replace("${INTENT_RECEIVER}",receivers);
+        }
+
+        template = template.replace("${IMPORTS}","\n"+imports+"\n");
+
         return template;
     }
 
@@ -129,6 +159,7 @@ public class ListViewActivity extends DraggableActivity {
         String template = null;
         String imports = "";
         String itemClick = "";
+        String extraId="";
         if (adapterType.equals("Custom")){
             template = classCustomFragment;
             generateAdapter();
@@ -144,7 +175,13 @@ public class ListViewActivity extends DraggableActivity {
         if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0){
 
             Intent intent = super.getOutgoingIntentsForType(IntentType.fabClick).get(0);
-            fabIntent = fabIntent.concat("\n"+((FABIntent)intent).getIntentCode()+"\n");
+            if(!intent.getExtraType().equals("None")){
+                extraId = extraId.concat(((FABIntent)intent).getExtraIdDeclaration()+"\n");
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+"\n");
+
+            }else{
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+'\n');
+            }
             imports = imports.concat(Imports.FAB);
 
         }
@@ -161,6 +198,7 @@ public class ListViewActivity extends DraggableActivity {
         }
         template = template.replace("${IMPORTS}","\n"+imports+"\n");
         template = template.replace("${INTENT}","\n"+itemClick+"\n");
+        template = template.replace("${INTENT_EXTRA_ID}","\n"+extraId);
         return template;
     }
 

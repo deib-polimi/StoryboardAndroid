@@ -87,17 +87,17 @@ public class EmptyActivity extends DraggableActivity {
             imports =imports.concat(Imports.BUTTON+"\n");
             imports = imports.concat(Imports.INTENT+"\n");
             imports = imports.concat(Imports.VIEW+"\n");
-            int extraNum = 1;
+            //int extraNum = 1;
             for(Intent i : super.getOutgoingIntentsForType(IntentType.buttonClick)){
                 //set buttons declarations
                 declarations = declarations.concat("private Button "+((ButtonClickIntent)i).getButtonId()+";\n");
                 if(!((ButtonClickIntent) i).getExtraType().equals("None")){
-                    extraId = extraId.concat(((ButtonClickIntent)i).getExtraIdDeclaration(extraNum)+"\n");
-                    intent = intent.concat(((ButtonClickIntent)i).getIntentCode(extraNum)+"\n");
-                    extraNum++;
+                    extraId = extraId.concat(((ButtonClickIntent)i).getExtraIdDeclaration()+"\n");
+                    intent = intent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
+                    //extraNum++;
 
                 }else{
-                    intent = intent.concat(((ButtonClickIntent)i).getIntentCode(0)+"\n");
+                    intent = intent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
                 }
 
                 setViews = setViews.concat(((ButtonClickIntent)i).getButtonId()+" = (Button) findViewById(R.id."
@@ -145,7 +145,6 @@ public class EmptyActivity extends DraggableActivity {
         String intent = "";
         String extraId= "";
         //create code of the button click intents outgoing from the activity
-        int extraNum = 1;
         if (super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0){
             //set imports
             imports =imports.concat(Imports.BUTTON+"\n");
@@ -154,12 +153,11 @@ public class EmptyActivity extends DraggableActivity {
                 //set buttons declarations
                 declarations = declarations.concat("private Button "+((ButtonClickIntent)i).getButtonId()+";\n");
                 if(!((ButtonClickIntent) i).getExtraType().equals("None")){
-                    extraId = extraId.concat(((ButtonClickIntent)i).getExtraIdDeclaration(extraNum)+"\n");
-                    intent = intent.concat(((ButtonClickIntent)i).getIntentCode(extraNum)+"\n");
-                    extraNum++;
+                    extraId = extraId.concat(((ButtonClickIntent)i).getExtraIdDeclaration()+"\n");
+                    intent = intent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
 
                 }else{
-                    intent = intent.concat(((ButtonClickIntent)i).getIntentCode(0)+"\n");
+                    intent = intent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
                 }
                 setViews = setViews.concat(((ButtonClickIntent)i).getButtonId()+" = (Button) view.findViewById(R.id."
                         +((ButtonClickIntent)i).getButtonId()+"_button);\n");

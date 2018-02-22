@@ -13,8 +13,8 @@ import ${PACKAGE}.adapter.${ACTIVITY_NAME}Model;
 import ${PACKAGE}.adapter.${ACTIVITY_NAME}Adapter;
 ${IMPORTS}
 public class ${ACTIVITY_NAME} extends Fragment {
-
-   @Override
+    ${INTENT_EXTRA_ID}
+    @Override
    	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.${ACTIVITY_LAYOUT}, container, false);

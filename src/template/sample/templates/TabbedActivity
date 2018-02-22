@@ -26,7 +26,7 @@ public class ${ACTIVITY_NAME} extends AppCompatActivity {
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    private ViewPager mViewPager;
+    private ViewPager mViewPager;${INTENT_EXTRA_ID}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

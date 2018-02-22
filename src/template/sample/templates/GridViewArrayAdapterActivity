@@ -9,12 +9,13 @@ import java.util.List;
 import android.view.View;
 ${IMPORTS}
 public class ${ACTIVITY_NAME} extends AppCompatActivity {
-
+    ${INTENT_EXTRA_ID}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.${ACTIVITY_LAYOUT});
         ${FAB}
+        ${INTENT_RECEIVER}
         setupView();
     }
 

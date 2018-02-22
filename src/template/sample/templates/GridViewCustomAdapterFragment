@@ -15,7 +15,7 @@ import ${PACKAGE}.adapter.${ACTIVITY_NAME}Model;
 import ${PACKAGE}.adapter.${ACTIVITY_NAME}Adapter;
 
 public class ${ACTIVITY_NAME} extends Fragment {
-
+    ${INTENT_EXTRA_ID}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

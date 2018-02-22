@@ -2,7 +2,7 @@ FloatingActionButton fab = (FloatingActionButton) ${GET_VIEW}findViewById(R.id.f
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent ${INTENT_ID} = new Intent(${CONTEXT},${DESTINATION_ACTIVITY}.class);
+                Intent ${INTENT_ID} = new Intent(${CONTEXT},${DESTINATION_ACTIVITY}.class);${EXTRA}
                 startActivity(${INTENT_ID});
             }
         });

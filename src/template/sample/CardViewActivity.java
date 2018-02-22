@@ -98,6 +98,7 @@ public class CardViewActivity extends DraggableActivity {
         String template = classTemplate;
         String imports = "";
         String cardClick = "";
+        String extraId="";
 
         if (layout.equals("List")){
             template = template.replace("${COLUMNS}","");
@@ -112,7 +113,13 @@ public class CardViewActivity extends DraggableActivity {
         if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0){
 
             Intent intent = super.getOutgoingIntentsForType(IntentType.fabClick).get(0);
-            fabIntent = fabIntent.concat("\n"+((FABIntent)intent).getIntentCode()+"\n");
+            if(!intent.getExtraType().equals("None")){
+                extraId = extraId.concat(((FABIntent)intent).getExtraIdDeclaration()+"\n");
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+"\n");
+
+            }else{
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+'\n');
+            }
             imports = imports.concat(Imports.FAB);
 
         }
@@ -129,8 +136,20 @@ public class CardViewActivity extends DraggableActivity {
             generateClickListener();
             imports = imports.concat(Imports.CLICK_LISTENER+"\n");
         }
+
+        //intent receivers
+        String receivers = "";
+        int nReceiver = 1;
+        for(Intent i : getIngoingIntents()){
+            if(i.getExtraType()!=null && !i.getExtraType().equals("None")){
+                receivers = receivers.concat(i.getExtraReceiver(nReceiver)+"\n");
+                nReceiver++;
+            }
+        }
+
         if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0 ||
-                super.getOutgoingIntentsForType(IntentType.cardClick).size()>0){
+                super.getOutgoingIntentsForType(IntentType.cardClick).size()>0 ||
+                !receivers.equals("")){
             imports = imports.concat(Imports.INTENT);
         }
         template = template.replace("${IMPORTS}",imports+"\n");
@@ -138,6 +157,13 @@ public class CardViewActivity extends DraggableActivity {
         template = template.replace("${ACTIVITY_NAME}",super.getName());
         template = template.replace("${ACTIVITY_LAYOUT}",generateLayoutName(super.getName()));
         template = template.replace("${PACKAGE}", ProjectHandler.getInstance().getPackage());
+
+        template = template.replace("${INTENT_EXTRA_ID}","\n"+extraId);
+        if (!receivers.equals("")){
+            template = template.replace("${INTENT_RECEIVER}","Intent intent = getIntent();\n"+receivers);
+        }else{
+            template = template.replace("${INTENT_RECEIVER}",receivers);
+        }
 
         generateAdapter();
         generateModel();
@@ -150,6 +176,7 @@ public class CardViewActivity extends DraggableActivity {
         String template = classFragment;
         String imports = "";
         String cardClick = "";
+        String extraId="";
 
         if (layout.equals("List")){
             template = template.replace("${COLUMNS}","");
@@ -164,7 +191,13 @@ public class CardViewActivity extends DraggableActivity {
         if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0){
 
             Intent intent = super.getOutgoingIntentsForType(IntentType.fabClick).get(0);
-            fabIntent = fabIntent.concat("\n"+((FABIntent)intent).getIntentCode()+"\n");
+            if(!intent.getExtraType().equals("None")){
+                extraId = extraId.concat(((FABIntent)intent).getExtraIdDeclaration()+"\n");
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+"\n");
+
+            }else{
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+'\n');
+            }
             imports = imports.concat(Imports.FAB);
 
         }
@@ -190,6 +223,7 @@ public class CardViewActivity extends DraggableActivity {
         template = template.replace("${ACTIVITY_NAME}",super.getName());
         template = template.replace("${ACTIVITY_LAYOUT}",generateLayoutName(super.getName()));
         template = template.replace("${PACKAGE}", ProjectHandler.getInstance().getPackage());
+        template = template.replace("${INTENT_EXTRA_ID}","\n"+extraId);
 
         generateAdapter();
         generateModel();

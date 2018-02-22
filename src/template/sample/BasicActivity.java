@@ -75,7 +75,6 @@ public class BasicActivity extends DraggableActivity {
         if((super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0)||(super.getOutgoingIntentsForType(IntentType.fabClick).size()>0)){
             imports = imports.concat(Imports.INTENT+"\n");
         }
-        int extraNum = 1;
         if (super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0){
             //set imports
             imports =imports.concat(Imports.BUTTON+"\n");
@@ -83,12 +82,11 @@ public class BasicActivity extends DraggableActivity {
                 //set buttons declarations
                 declarations = declarations.concat("private Button "+((ButtonClickIntent)i).getButtonId()+";\n");
                 if(!((ButtonClickIntent) i).getExtraType().equals("None")){
-                    extraId = extraId.concat(((ButtonClickIntent)i).getExtraIdDeclaration(extraNum)+"\n");
-                    buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode(extraNum)+"\n");
-                    extraNum++;
+                    extraId = extraId.concat(((ButtonClickIntent)i).getExtraIdDeclaration()+"\n");
+                    buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
 
                 }else{
-                    buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode(0)+"\n");
+                    buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
                 }
 
                 setViews = setViews.concat(((ButtonClickIntent)i).getButtonId()+" = (Button) findViewById(R.id."
@@ -99,7 +97,13 @@ public class BasicActivity extends DraggableActivity {
         if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0){
 
             Intent intent = super.getOutgoingIntentsForType(IntentType.fabClick).get(0);
-            fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode());
+            if(!intent.getExtraType().equals("None")){
+                extraId = extraId.concat(((FABIntent)intent).getExtraIdDeclaration()+"\n");
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+"\n");
+
+            }else{
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+'\n');
+            }
             template = template.replace("${INTENT}",fabIntent);
         }else{
             String emptyFAB =codeGenerator.provideTemplateForName("templates/FABIntentEmpty");
@@ -127,7 +131,7 @@ public class BasicActivity extends DraggableActivity {
 
         template = template.replace("${INTENT_EXTRA_ID}","\n"+extraId);
         if (!receivers.equals("")){
-            if(super.getOutgoingIntentsForType(IntentType.buttonClick).size()==0){
+            if(super.getOutgoingIntentsForType(IntentType.buttonClick).size()==0 && super.getOutgoingIntentsForType(IntentType.fabClick).size()==0){
                 imports = imports = imports.concat(Imports.INTENT+"\n");
             }
             template = template.replace("${INTENT_RECEIVER}","Intent intent = getIntent();\n"+receivers);
@@ -154,7 +158,6 @@ public class BasicActivity extends DraggableActivity {
         if((super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0)||(super.getOutgoingIntentsForType(IntentType.fabClick).size()>0)){
             imports = imports.concat(Imports.INTENT+"\n");
         }
-        int extraNum = 1;
         if (super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0){
             //set imports
             imports =imports.concat(Imports.BUTTON+"\n");
@@ -162,12 +165,11 @@ public class BasicActivity extends DraggableActivity {
                 //set buttons declarations
                 declarations = declarations.concat("private Button "+((ButtonClickIntent)i).getButtonId()+";\n");
                 if(!((ButtonClickIntent) i).getExtraType().equals("None")){
-                    extraId = extraId.concat(((ButtonClickIntent)i).getExtraIdDeclaration(extraNum)+"\n");
-                    buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode(extraNum)+"\n");
-                    extraNum++;
+                    extraId = extraId.concat(((ButtonClickIntent)i).getExtraIdDeclaration()+"\n");
+                    buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
 
                 }else{
-                    buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode(0)+"\n");
+                    buttonClickintent = buttonClickintent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
                 }
 
                 setViews = setViews.concat(((ButtonClickIntent)i).getButtonId()+" = (Button) view.findViewById(R.id."
@@ -177,7 +179,13 @@ public class BasicActivity extends DraggableActivity {
         if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0){
 
             Intent intent = super.getOutgoingIntentsForType(IntentType.fabClick).get(0);
-            fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode());
+            if(!intent.getExtraType().equals("None")){
+                extraId = extraId.concat(((FABIntent)intent).getExtraIdDeclaration()+"\n");
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+"\n");
+
+            }else{
+                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+'\n');
+            }
             template = template.replace("${INTENT}",fabIntent);
         }else{
             String emptyFAB =codeGenerator.provideTemplateForName("templates/FABIntentEmpty");
@@ -227,6 +235,7 @@ public class BasicActivity extends DraggableActivity {
             activityInspector.fillValues(this);
             inspectorManager.loadActivityInspector(activityInspector,this);
         }
+
 
     }
 

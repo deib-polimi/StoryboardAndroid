@@ -12,6 +12,6 @@ public class ${ACTIVITY_NAME} extends AppCompatActivity {
         setContentView(R.layout.${ACTIVITY_LAYOUT});
         ${INTENT_RECEIVER}
         ${SET_VIEWS}
-        ${BUTTON_CLICK_INTENT}
+        ${BUTTON_CLICK_INTENT}${UP_NAVIGATION}
     }
 }

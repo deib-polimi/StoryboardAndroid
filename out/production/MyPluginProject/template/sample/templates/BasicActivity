@@ -19,7 +19,7 @@ public class ${ACTIVITY_NAME} extends AppCompatActivity {
         ${INTENT}
         ${INTENT_RECEIVER}
         ${SET_VIEWS}
-        ${BUTTON_CLICK_INTENT}
+        ${BUTTON_CLICK_INTENT}${UP_NAVIGATION}
     }
 
 }

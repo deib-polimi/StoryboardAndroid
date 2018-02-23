@@ -2,7 +2,7 @@ recyclerView.addOnItemTouchListener(new ${ACTIVITY_NAME}ClickListener(${CONTEXT}
             @Override
             public void onItemClick(View view, int position) {
 
-                Intent intent = new Intent(${CONTEXT},${DESTINATION_ACTIVITY}.class);
+                Intent intent = new Intent(${CONTEXT},${DESTINATION_ACTIVITY}.class);${EXTRA}
                 startActivity(intent);
 
             }

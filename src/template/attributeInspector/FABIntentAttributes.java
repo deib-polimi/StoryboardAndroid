@@ -21,8 +21,8 @@ public class FABIntentAttributes extends IntentAttributes {
     private Label target_label;
     @FXML
     private Label type_label;
-    @FXML
-    private TextField name_txt;
+    /*@FXML
+    private TextField name_txt;*/
     @FXML
     private ChoiceBox<String> extra_box;
 
@@ -44,16 +44,16 @@ public class FABIntentAttributes extends IntentAttributes {
 
     @FXML
     private void initialize() {
-        name_txt.textProperty().addListener((observable, oldValue, newValue) -> {
+        /*name_txt.textProperty().addListener((observable, oldValue, newValue) -> {
             name_txt.setText(newValue = newValue.substring(0, 1).toLowerCase() + newValue.substring(1));
-        });
+        });*/
 
     }
 
     public void fillValues(FABIntent intent){
         target_label.setText(intent.getBelongingLink().getTarget().getName());
         type_label.setText(intent.getType().toString());
-        name_txt.setText(intent.getName());
+        //name_txt.setText(intent.getName());
         ObservableList<String> boxValues = FXCollections.observableArrayList();
         boxValues.addAll("None","String","Boolean","Integer","Float","Double");
         extra_box.setItems(boxValues);
@@ -61,10 +61,10 @@ public class FABIntentAttributes extends IntentAttributes {
     }
 
     public void createListeners(FABIntent intent){
-        name_txt.textProperty().addListener((observable, oldValue, newValue) -> {
+        /*name_txt.textProperty().addListener((observable, oldValue, newValue) -> {
             newValue = newValue.substring(0, 1).toLowerCase() + newValue.substring(1);
             intent.updateName(newValue);
-        });
+        });*/
 
         extra_box.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override

@@ -18,7 +18,7 @@ public class ${ACTIVITY_NAME} extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.${ACTIVITY_LAYOUT});
         ${FAB}
-        ${INTENT_RECEIVER}
+        ${INTENT_RECEIVER}${UP_NAVIGATION}
         setupView();
     }
 

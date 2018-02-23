@@ -87,19 +87,14 @@ public class EmptyActivity extends DraggableActivity {
             imports =imports.concat(Imports.BUTTON+"\n");
             imports = imports.concat(Imports.INTENT+"\n");
             imports = imports.concat(Imports.VIEW+"\n");
-            //int extraNum = 1;
+
             for(Intent i : super.getOutgoingIntentsForType(IntentType.buttonClick)){
                 //set buttons declarations
                 declarations = declarations.concat("private Button "+((ButtonClickIntent)i).getButtonId()+";\n");
                 if(!((ButtonClickIntent) i).getExtraType().equals("None")){
                     extraId = extraId.concat(((ButtonClickIntent)i).getExtraIdDeclaration()+"\n");
-                    intent = intent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
-                    //extraNum++;
-
-                }else{
-                    intent = intent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
                 }
-
+                intent = intent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
                 setViews = setViews.concat(((ButtonClickIntent)i).getButtonId()+" = (Button) findViewById(R.id."
                         +((ButtonClickIntent)i).getButtonId()+"_button);\n");
             }
@@ -115,6 +110,13 @@ public class EmptyActivity extends DraggableActivity {
             }
         }
 
+        //up navigation
+        if(super.getIngoingIntentsForType(IntentType.itemClick).size()>0 ||
+                super.getIngoingIntentsForType(IntentType.cardClick).size()>0 ){
+            template = template.replace("${UP_NAVIGATION}","getSupportActionBar().setDisplayHomeAsUpEnabled(true);"+"\n");
+        }else{
+            template = template.replace("${UP_NAVIGATION}","");
+        }
 
         template = template.replace("${INTENT_EXTRA_ID}","\n"+extraId);
         template = template.replace("${DECLARATIONS}",declarations);
@@ -125,7 +127,7 @@ public class EmptyActivity extends DraggableActivity {
         template = template.replace("${PACKAGE}",ProjectHandler.getInstance().getPackage());
         if (!receivers.equals("")){
             if(super.getOutgoingIntentsForType(IntentType.buttonClick).size()==0){
-                imports = imports = imports.concat(Imports.INTENT+"\n");
+                imports = imports.concat(Imports.INTENT+"\n");
             }
             template = template.replace("${INTENT_RECEIVER}","Intent intent = getIntent();\n"+receivers);
         }else{
@@ -154,11 +156,8 @@ public class EmptyActivity extends DraggableActivity {
                 declarations = declarations.concat("private Button "+((ButtonClickIntent)i).getButtonId()+";\n");
                 if(!((ButtonClickIntent) i).getExtraType().equals("None")){
                     extraId = extraId.concat(((ButtonClickIntent)i).getExtraIdDeclaration()+"\n");
-                    intent = intent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
-
-                }else{
-                    intent = intent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
                 }
+                intent = intent.concat(((ButtonClickIntent)i).getIntentCode()+"\n");
                 setViews = setViews.concat(((ButtonClickIntent)i).getButtonId()+" = (Button) view.findViewById(R.id."
                         +((ButtonClickIntent)i).getButtonId()+"_button);\n");
             }
@@ -221,14 +220,33 @@ public class EmptyActivity extends DraggableActivity {
 
     @Override
     public String getManifest() throws IOException {
+        String attributes ="";
         String manifest = codeGenerator.provideTemplateForName("templates/ManifestActivity");
         manifest = manifest.replace("${ACTIVITY}",super.getName());
-        manifest = manifest.replace("${ATTRIBUTES}"," android:label=\""+super.getName()+"\"");
+        attributes = attributes.concat(" android:label=\""+super.getName()+"\"");
         if (IsInitialActivity.getInstance().isInitialActivity(this)){
             manifest = manifest.replace("${INTENT_FILTER}","\n"+codeGenerator.provideTemplateForName("templates/IntentFilterLauncher")+"\n\t\t");
         }else {
             manifest = manifest.replace("${INTENT_FILTER}","");
         }
+
+        //up navigation
+        if(super.getIngoingIntentsForType(IntentType.itemClick).size()==1){
+            AdapterViewItemClick i = (AdapterViewItemClick)super.getIngoingIntentsForType(IntentType.itemClick).get(0);
+            if(i.getBelongingLink().getSource().isFragment()){
+                attributes = attributes.concat("\nandroid:parentActivityName=\"."+getContainerActivity(i.getBelongingLink().getSource()).getName()+"\"");
+            }else{
+                attributes = attributes.concat("\nandroid:parentActivityName=\"."+i.getBelongingLink().getSource().getName()+"\"");
+            }
+        } else if(super.getIngoingIntentsForType(IntentType.cardClick).size()==1){
+            CardViewItemClick i = (CardViewItemClick) super.getIngoingIntentsForType(IntentType.cardClick).get(0);
+            if(i.getBelongingLink().getSource().isFragment()){
+                attributes = attributes.concat("\nandroid:parentActivityName=\"."+getContainerActivity(i.getBelongingLink().getSource()).getName()+"\"");
+            }else{
+                attributes = attributes.concat("\nandroid:parentActivityName=\"."+i.getBelongingLink().getSource().getName()+"\"");
+            }
+        }
+        manifest = manifest.replace("${ATTRIBUTES}",attributes);
         return manifest;
     }
 

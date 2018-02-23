@@ -537,6 +537,19 @@ public class DraggableActivity extends AnchorPane{
         }
         return intentList;
     }
+    public List<Intent> getIngoingIntentsForType(IntentType type){
+        List<Intent> intentList = new ArrayList<Intent>();
+        for(Link l: getIngoingLinks()){
+            for(Intent i: l.getIntentsList()){
+                if(i.getType() == type){
+                    intentList.add(i);
+                }
+
+            }
+        }
+        return intentList;
+    }
+
     public boolean isFragment(){
         return isFragment;
     }

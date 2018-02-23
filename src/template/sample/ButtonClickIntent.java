@@ -79,7 +79,7 @@ public class ButtonClickIntent extends Intent {
     public String getIntentCode(){
         String template = classTemplate;
         template = template.replace("${BUTTON_ID}",buttonId);
-        template = template.replace("${INTENT_ID}",super.getName());
+        //template = template.replace("${INTENT_ID}",super.getName());
         template = template.replace("${DESTINATION_ACTIVITY}",super.getBelongingLink().getTarget().getName());
         if(super.getBelongingLink().getSource().isFragment()){
             template = template.replace("${CONTEXT}","getActivity()");

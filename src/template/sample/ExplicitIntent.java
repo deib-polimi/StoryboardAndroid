@@ -22,7 +22,6 @@ public class ExplicitIntent extends Intent {
         super(curve, t, radius, type);
 
         this.intentInspector = new FABIntentAttributes();
-        super.setName("newIntent");
         classTemplate = codeGenerator.provideTemplateForName("templates/Intent");
     }
 

@@ -48,6 +48,7 @@ public class ${ACTIVITY_NAME} extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
         ${FAB}
+        ${UP_NAVIGATION}
     }
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to

@@ -56,22 +56,54 @@ public class LoginActivity extends DraggableActivity {
         String template = classTemplate;
         String imports = "";
         String intent = "";
+        String extraId="";
         //create code of the button click intents outgoing from the activity
         if (super.getOutgoingIntentsForType(IntentType.loginClick).size()>0){
             //set imports
             imports = imports.concat(Imports.INTENT+"\n");
             Intent i = super.getOutgoingIntentsForType(IntentType.loginClick).get(0);
             //set intent
-            intent = intent.concat(((LoginIntent)i).getIntentCode());
+            if(!((LoginIntent) i).getExtraType().equals("None")){
+                extraId = extraId.concat(((LoginIntent)i).getExtraIdDeclaration()+"\n");
+
+            }
+            intent = intent.concat(((LoginIntent)i).getIntentCode()+"\n");
             template = template.replace("${INTENT}",intent);
         }else{
             template = template.replace("${INTENT}","");
         }
 
-        template = template.replace("${IMPORTS}",imports);
+        //intent receivers
+        String receivers = "";
+        int nReceiver = 1;
+        for(Intent i : getIngoingIntents()){
+            if(i.getExtraType()!=null && !i.getExtraType().equals("None")){
+                receivers = receivers.concat(i.getExtraReceiver(nReceiver)+"\n");
+                nReceiver++;
+            }
+        }
+
+        //up navigation
+        if(super.getIngoingIntentsForType(IntentType.itemClick).size()>0 ||
+                super.getIngoingIntentsForType(IntentType.cardClick).size()>0 ){
+            template = template.replace("${UP_NAVIGATION}","getSupportActionBar().setDisplayHomeAsUpEnabled(true);"+"\n");
+        }else{
+            template = template.replace("${UP_NAVIGATION}","");
+        }
+
         template = template.replace("${ACTIVITY_NAME}",super.getName());
         template = template.replace("${ACTIVITY_LAYOUT}",generateLayoutName(super.getName()));
         template = template.replace("${PACKAGE}", ProjectHandler.getInstance().getPackage());
+        template = template.replace("${INTENT_EXTRA_ID}","\n"+extraId);
+        if (!receivers.equals("")){
+            if(super.getOutgoingIntentsForType(IntentType.loginClick).size()==0){
+                imports = imports.concat(Imports.INTENT+"\n");
+            }
+            template = template.replace("${INTENT_RECEIVER}","Intent intent = getIntent();\n"+receivers);
+        }else{
+            template = template.replace("${INTENT_RECEIVER}",receivers);
+        }
+        template = template.replace("${IMPORTS}",imports);
 
         return template;
     }
@@ -109,15 +141,34 @@ public class LoginActivity extends DraggableActivity {
 
     @Override
     public String getManifest() throws IOException {
+        String attributes ="";
         String manifest = codeGenerator.provideTemplateForName("templates/ManifestActivity");
         manifest = manifest.replace("${ACTIVITY}",super.getName());
 
-        manifest = manifest.replace("${ATTRIBUTES}"," android:label=\""+super.getName()+"\"");
+        attributes = attributes.concat(" android:label=\""+super.getName()+"\"");
         if (IsInitialActivity.getInstance().isInitialActivity(this)){
             manifest = manifest.replace("${INTENT_FILTER}","\n"+codeGenerator.provideTemplateForName("templates/IntentFilterLauncher")+"\n\t\t");
         }else {
             manifest = manifest.replace("${INTENT_FILTER}","");
         }
+
+        //up navigation
+        if(super.getIngoingIntentsForType(IntentType.itemClick).size()==1){
+            AdapterViewItemClick i = (AdapterViewItemClick)super.getIngoingIntentsForType(IntentType.itemClick).get(0);
+            if(i.getBelongingLink().getSource().isFragment()){
+                attributes = attributes.concat("\nandroid:parentActivityName=\"."+getContainerActivity(i.getBelongingLink().getSource()).getName()+"\"");
+            }else{
+                attributes = attributes.concat("\nandroid:parentActivityName=\"."+i.getBelongingLink().getSource().getName()+"\"");
+            }
+        } else if(super.getIngoingIntentsForType(IntentType.cardClick).size()==1){
+            CardViewItemClick i = (CardViewItemClick) super.getIngoingIntentsForType(IntentType.cardClick).get(0);
+            if(i.getBelongingLink().getSource().isFragment()){
+                attributes = attributes.concat("\nandroid:parentActivityName=\"."+getContainerActivity(i.getBelongingLink().getSource()).getName()+"\"");
+            }else{
+                attributes = attributes.concat("\nandroid:parentActivityName=\"."+i.getBelongingLink().getSource().getName()+"\"");
+            }
+        }
+        manifest = manifest.replace("${ATTRIBUTES}",attributes);
         return manifest;
     }
 

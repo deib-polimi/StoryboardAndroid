@@ -1,2 +1,2 @@
 ${TYPE} message = ${CONTENT};
-newIntent.putExtra(EXTRA_MESSAGE${N},message);
+intent.putExtra(EXTRA_MESSAGE${N},message);

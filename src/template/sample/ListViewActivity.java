@@ -107,12 +107,8 @@ public class ListViewActivity extends DraggableActivity {
             Intent intent = super.getOutgoingIntentsForType(IntentType.fabClick).get(0);
             if(!intent.getExtraType().equals("None")){
                 extraId = extraId.concat(((FABIntent)intent).getExtraIdDeclaration()+"\n");
-                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+"\n");
-
-
-            }else{
-                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+'\n');
             }
+            fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+"\n");
             imports = imports.concat(Imports.FAB);
 
         }
@@ -120,7 +116,10 @@ public class ListViewActivity extends DraggableActivity {
         if(super.getOutgoingIntentsForType(IntentType.itemClick).size()>0){
             imports = imports.concat(Imports.ADAPTER_VIEW);
             Intent intent = super.getOutgoingIntentsForType(IntentType.itemClick).get(0);
-            itemClick = itemClick.concat(((AdapterViewItemClick)intent).getIntentCode());
+            if(!intent.getExtraType().equals("None")){
+                extraId = extraId.concat(((AdapterViewItemClick)intent).getExtraIdDeclaration()+"\n");
+            }
+            itemClick = itemClick.concat(((AdapterViewItemClick)intent).getIntentCode()+"\n");
 
         }
 
@@ -134,6 +133,15 @@ public class ListViewActivity extends DraggableActivity {
                 nReceiver++;
             }
         }
+
+        //up navigation
+        if(super.getIngoingIntentsForType(IntentType.itemClick).size()>0 ||
+                super.getIngoingIntentsForType(IntentType.cardClick).size()>0 ){
+            template = template.replace("${UP_NAVIGATION}","getSupportActionBar().setDisplayHomeAsUpEnabled(true);"+"\n");
+        }else{
+            template = template.replace("${UP_NAVIGATION}","");
+        }
+
         if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0 ||
                 super.getOutgoingIntentsForType(IntentType.itemClick).size()>0 ||
                 !receivers.equals("")){
@@ -177,11 +185,8 @@ public class ListViewActivity extends DraggableActivity {
             Intent intent = super.getOutgoingIntentsForType(IntentType.fabClick).get(0);
             if(!intent.getExtraType().equals("None")){
                 extraId = extraId.concat(((FABIntent)intent).getExtraIdDeclaration()+"\n");
-                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+"\n");
-
-            }else{
-                fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+'\n');
             }
+            fabIntent = fabIntent.concat(((FABIntent)intent).getIntentCode()+"\n");
             imports = imports.concat(Imports.FAB);
 
         }
@@ -189,7 +194,10 @@ public class ListViewActivity extends DraggableActivity {
         if(super.getOutgoingIntentsForType(IntentType.itemClick).size()>0){
             imports = imports.concat(Imports.ADAPTER_VIEW);
             Intent intent = super.getOutgoingIntentsForType(IntentType.itemClick).get(0);
-            itemClick = itemClick.concat(((AdapterViewItemClick)intent).getIntentCode());
+            if(!intent.getExtraType().equals("None")){
+                extraId = extraId.concat(((AdapterViewItemClick)intent).getExtraIdDeclaration()+"\n");
+            }
+            itemClick = itemClick.concat(((AdapterViewItemClick)intent).getIntentCode()+"\n");
 
         }
         if (super.getOutgoingIntentsForType(IntentType.fabClick).size()>0 ||
@@ -275,14 +283,33 @@ public class ListViewActivity extends DraggableActivity {
 
     @Override
     public String getManifest() throws IOException {
+        String attributes ="";
         String manifest = codeGenerator.provideTemplateForName("templates/ManifestActivity");
         manifest = manifest.replace("${ACTIVITY}",super.getName());
-        manifest = manifest.replace("${ATTRIBUTES}"," android:label=\""+super.getName()+"\"");
+        attributes = attributes.concat(" android:label=\""+super.getName()+"\"");
         if (IsInitialActivity.getInstance().isInitialActivity(this)){
             manifest = manifest.replace("${INTENT_FILTER}","\n"+codeGenerator.provideTemplateForName("templates/IntentFilterLauncher")+"\n\t\t");
         }else {
             manifest = manifest.replace("${INTENT_FILTER}","");
         }
+
+        //up navigation
+        if(super.getIngoingIntentsForType(IntentType.itemClick).size()==1){
+            AdapterViewItemClick i = (AdapterViewItemClick)super.getIngoingIntentsForType(IntentType.itemClick).get(0);
+            if(i.getBelongingLink().getSource().isFragment()){
+                attributes = attributes.concat("\nandroid:parentActivityName=\"."+getContainerActivity(i.getBelongingLink().getSource()).getName()+"\"");
+            }else{
+                attributes = attributes.concat("\nandroid:parentActivityName=\"."+i.getBelongingLink().getSource().getName()+"\"");
+            }
+        } else if(super.getIngoingIntentsForType(IntentType.cardClick).size()==1){
+            CardViewItemClick i = (CardViewItemClick) super.getIngoingIntentsForType(IntentType.cardClick).get(0);
+            if(i.getBelongingLink().getSource().isFragment()){
+                attributes = attributes.concat("\nandroid:parentActivityName=\"."+getContainerActivity(i.getBelongingLink().getSource()).getName()+"\"");
+            }else{
+                attributes = attributes.concat("\nandroid:parentActivityName=\"."+i.getBelongingLink().getSource().getName()+"\"");
+            }
+        }
+        manifest = manifest.replace("${ATTRIBUTES}",attributes);
         return manifest;
     }
 
@@ -330,7 +357,9 @@ public class ListViewActivity extends DraggableActivity {
                 });
                 items.add(item1);
             }
-            if(super.getOutgoingIntentsForType(IntentType.itemClick).size() ==0){
+            if(super.getOutgoingIntentsForType(IntentType.itemClick).size() ==0 &&
+                    target.getIngoingIntentsForType(IntentType.itemClick).size() ==0 &&
+                    target.getIngoingIntentsForType(IntentType.cardClick).size() ==0){
                 MenuItem item2 = new MenuItem("Item Click");
                 item2.setOnAction(new EventHandler<ActionEvent>() {
 

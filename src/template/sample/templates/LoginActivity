@@ -64,11 +64,14 @@ public class ${ACTIVITY_NAME} extends AppCompatActivity implements LoaderCallbac
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    ${INTENT_EXTRA_ID}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.${ACTIVITY_LAYOUT});
+
+        ${INTENT_RECEIVER}${UP_NAVIGATION}
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();

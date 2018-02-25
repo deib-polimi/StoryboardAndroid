@@ -20,5 +20,5 @@ public class ${ACTIVITY_NAME} extends Fragment {
         ${SET_VIEWS}
         ${BUTTON_CLICK_INTENT}
         return view;
-    }
+    }${ON_RESULT}
 }

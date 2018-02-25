@@ -1,0 +1,8 @@
+${BUTTON_ID}.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				Intent intent = new Intent();${EXTRA}
+				setResult(RESULT_OK, intent);
+				finish();
+			}
+		});

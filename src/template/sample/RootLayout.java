@@ -253,10 +253,28 @@ public class RootLayout extends AnchorPane{
                     String targetId = container.getValue("target");
 
                     if (sourceId != null && targetId != null && !sourceId.equals(targetId)) {
-                        Point2D point = container.getValue("drop_coords");
-                        ContextMenu contextMenu = new ContextMenu();
-                        buildContextMenu(contextMenu,container,(DraggableActivity)searchById(sourceId),(DraggableActivity)searchById(targetId));
-                        contextMenu.show(graph_pane, point.getX(), point.getY());
+                        DraggableActivity source = null;
+                        DraggableActivity target = null;
+
+                        for (Node n: graph_pane.getChildren()) {
+
+                            if (n.getId() == null)
+                                continue;
+
+                            if (n.getId().equals(sourceId))
+                                source = (DraggableActivity) n;
+
+                            if (n.getId().equals(targetId))
+                                target = (DraggableActivity) n;
+
+                        }
+                        if (linkAlreadyExist(target,source) ==null){
+                            Point2D point = container.getValue("drop_coords");
+                            ContextMenu contextMenu = new ContextMenu();
+                            buildContextMenu(contextMenu,container,(DraggableActivity)searchById(sourceId),(DraggableActivity)searchById(targetId));
+                            contextMenu.show(graph_pane, point.getX(), point.getY());
+                        }
+
                     }
 
                 }
@@ -311,6 +329,16 @@ public class RootLayout extends AnchorPane{
            //highlight (and store) the selected item
            SelectedItem selectedItem = SelectedItem.getInstance();
            selectedItem.setSelectedItem(selectedNode);
+
+           //load attribute inspector
+           if (selectedNode instanceof DraggableActivity){
+               ((DraggableActivity) selectedNode).loadInspector();
+           }else if(selectedNode instanceof Link){
+               AttributeInspectorManager inspectorManager = AttributeInspectorManager.getInstance();
+               inspectorManager.loadLinkInspector((Link)selectedNode);
+           }else if (selectedNode instanceof Intent){
+               ((Intent) selectedNode).loadAttributeInspector();
+           }
        }
        else {
            deselectAll();
@@ -404,6 +432,7 @@ public class RootLayout extends AnchorPane{
 
             if (source != null && target != null){
                 Link l = linkAlreadyExist(source,target);
+
                 //se link esiste già aggiungo intent
                 if (l!= null){
                     //controllo che il limite massimo di intent per link (5) non sia stato raggiunto
@@ -426,8 +455,13 @@ public class RootLayout extends AnchorPane{
 
                 }
                 //altrimenti creo nuovo link
-                else{
+                else {
                     Link link = new Link();
+                    //check if exist link in opposite direction
+                    /*if (linkAlreadyExist(target,source)!=null){
+                        link.setReverse(true);
+                    }*/
+
                     graph_pane.getChildren().add(0,link);
                     link.setSource(source);
                     link.setTarget(target);
@@ -436,6 +470,7 @@ public class RootLayout extends AnchorPane{
                     Intent intent = createIntentByType(link.getCurve(),0.5f,20,intentType);
                     link.bindEnds(source, target,intent);
                     graph_pane.getChildren().add(intent);
+
 
                     //activity tiene traccia dei link ad esa collegati. Questo serve per aggiornare
                     //la posizione di arrow e icone intents quando sposto activity nel grafo
@@ -547,6 +582,10 @@ public class RootLayout extends AnchorPane{
 
             case cardClick:
                 intent = new CardViewItemClick(curve,t,radius,type);
+                break;
+
+            case forResult:
+                intent = new ButtonClickWithResultIntent(curve,t,radius,type);
                 break;
 
             default:

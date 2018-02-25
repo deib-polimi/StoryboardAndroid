@@ -1,29 +1,40 @@
 package template.sample;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.When;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.control.TreeItem;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
-import template.attributeInspector.ButtonClickIntentAttributes;
-import template.attributeInspector.FABIntentAttributes;
+import javafx.scene.shape.Polygon;
+import javafx.scene.transform.Rotate;
 import template.attributeInspector.IntentAttributes;
-import template.managers.AttributeInspectorManager;
 import template.managers.StructureTreeManager;
 
 import java.io.IOException;
 import java.util.UUID;
 
 /**
- * Created by utente on 11/01/2018.
+ * Created by utente on 24/02/2018.
  */
-public class Intent extends Circle{
+public class Intent extends Pane {
+    @FXML
+    private Circle circle;
+    @FXML
+    private Pane root_pane;
+
     private float t;
     private CubicCurve curve;
     private double radius;
@@ -32,15 +43,33 @@ public class Intent extends Circle{
     private Link belongingLink;
     private String name;
 
-    public Intent(CubicCurve curve, float t, double radius, IntentType type ) throws IOException {
+    //private final DoubleProperty arrowDirection = new SimpleDoubleProperty();
+    //private Polygon arrow;
+    //private boolean showArrow = false;
 
-        super(radius);
+
+    public Intent(CubicCurve curve, float t, double radius, IntentType type) {
+
+        FXMLLoader fxmlLoader = new FXMLLoader(
+                getClass().getResource("Intent.fxml")
+        );
+
+        fxmlLoader.setRoot(this);
+        fxmlLoader.setController(this);
+
+        try {
+            fxmlLoader.load();
+
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+        circle.setRadius(radius);
         this.curve = curve;
         this.t = t;
         this.type = type;
         this.img = setImage(type);
-        setFill(new ImagePattern(img));
-        setStroke(Color.BLACK);
+        circle.setFill(new ImagePattern(img));
+        circle.setStroke(Color.BLACK);
         update();
         setId(UUID.randomUUID().toString());
 
@@ -61,8 +90,32 @@ public class Intent extends Circle{
                 }
             }
         });
+    }
+
+    @FXML
+    private void initialize() {
+
 
     }
+
+    /*public void showArrow(boolean showArrow){
+        this.showArrow = showArrow;
+        arrow.setVisible(showArrow);
+    }
+
+    public void setArrow(){
+
+        double[] arrowBIG = new double[] { 0,-3,5,3,-5,3 };
+        arrow = new Polygon(arrowBIG);
+        //arrow.setRotate(-90);
+        root_pane.getChildren().add(arrow);
+        arrowDirection.bind(new When((belongingLink.getSource().layoutXProperty()).lessThan(belongingLink.getTarget().layoutXProperty()))
+                .then(1.0).otherwise(-1.0));
+        arrow.translateXProperty().bind(Bindings.add(arrow.layoutXProperty(),arrowDirection.multiply(15)));
+        arrow.rotateProperty().bind(arrowDirection.multiply(90));
+        arrow.setVisible(showArrow);
+
+    }*/
 
     private Image setImage(IntentType type){
         Image image=null;
@@ -70,7 +123,7 @@ public class Intent extends Circle{
         switch (type) {
 
             case buttonClick:
-                image= new Image(getClass().getResource("/img/container.png").toString());
+                image= new Image(getClass().getResource("/img/android.jpg").toString());
                 break;
 
             case fabClick:
@@ -97,6 +150,10 @@ public class Intent extends Circle{
                 image= new Image(getClass().getResource("/img/listview.png").toString());
                 break;
 
+            case forResult:
+                image= new Image(getClass().getResource("/img/listview.png").toString());
+                break;
+
         }
         return image;
     }
@@ -107,8 +164,10 @@ public class Intent extends Circle{
 
         Point2D ori = eval(curve, t);
 
-        setTranslateX(ori.getX());
-        setTranslateY(ori.getY());
+        //setTranslateX(ori.getX());
+        setLayoutX(ori.getX());
+        //setTranslateY(ori.getY());
+        setLayoutY(ori.getY());
     }
     private Point2D eval(CubicCurve c, float t){
         Point2D p=new Point2D(Math.pow(1-t,3)*c.getStartX()+
@@ -123,7 +182,11 @@ public class Intent extends Circle{
     }
 
     public void changePosition (float tNew){
-        this.t = tNew;
+        /*if(showArrow){
+            this.t = 1-tNew;
+        }else{*/
+            this.t = tNew;
+        //}
         update();
     }
 
@@ -155,10 +218,10 @@ public class Intent extends Circle{
     public void delete (){
         if(type ==IntentType.tabIntent){
             belongingLink.getTarget().setFragment(false);
-            ((TabbedActivity)belongingLink.getSource()).removeTab((TabIntent) this);
+            //((TabbedActivity)belongingLink.getSource()).removeTab((TabIntent) this);
         }else if (type ==IntentType.bottomNavigIntent){
             belongingLink.getTarget().setFragment(false);
-            ((BottomNavigationActivity)belongingLink.getSource()).removeTab((BottomNavigationIntent) this);
+            //((BottomNavigationActivity)belongingLink.getSource()).removeTab((BottomNavigationIntent) this);
         }
         //remove intent from graph
         AnchorPane parent  = (AnchorPane) this.getParent();
@@ -224,3 +287,4 @@ public class Intent extends Circle{
     public String getExtraReceiver(int nID){return null;}
 
 }
+

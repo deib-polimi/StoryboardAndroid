@@ -1,0 +1,5 @@
+if (requestCode == ${REQ_CODE}) {
+    if (resultCode == RESULT_OK) {
+        ${EXTRA_RESULT}
+    }
+}

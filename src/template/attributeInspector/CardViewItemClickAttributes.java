@@ -59,7 +59,6 @@ public class CardViewItemClickAttributes extends IntentAttributes {
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 if(newValue.intValue()!=-1 || oldValue.intValue()==newValue.intValue()){
                     intent.setExtraType(boxValueToString(newValue.intValue()));
-                    System.out.println("type: " +intent.getExtraType());
                 }
             }
         });

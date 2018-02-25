@@ -6,14 +6,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import template.sample.ButtonClickIntent;
-import template.sample.CardViewActivity;
-import template.sample.EmptyActivity;
-import template.sample.Intent;
+import template.sample.*;
 
 import java.io.IOException;
 
@@ -32,6 +30,8 @@ public class ButtonClickIntentAttributes extends IntentAttributes {
     private TextField button_txt;
     @FXML
     private ChoiceBox<String> extra_box;
+    /*@FXML
+    private CheckBox result_check;*/
 
     public ButtonClickIntentAttributes() {
         FXMLLoader fxmlLoader = new FXMLLoader(
@@ -66,6 +66,7 @@ public class ButtonClickIntentAttributes extends IntentAttributes {
         boxValues.addAll("None","String","Boolean","Integer","Float","Double");
         extra_box.setItems(boxValues);
         extra_box.setValue(intent.getExtraType());
+        //result_check.setSelected(intent.isForResult());
     }
 
     public void createListeners(ButtonClickIntent intent){
@@ -81,10 +82,18 @@ public class ButtonClickIntentAttributes extends IntentAttributes {
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 if(newValue.intValue()!=-1 || oldValue.intValue()==newValue.intValue()){
                     intent.setExtraType(boxValueToString(newValue.intValue()));
-                    System.out.println("type: " +intent.getExtraType());
                 }
             }
         });
+
+        /*result_check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(newValue != oldValue){
+                    intent.setForResult(newValue);
+                }
+            }
+        });*/
     }
 
     public String boxValueToString(int value){

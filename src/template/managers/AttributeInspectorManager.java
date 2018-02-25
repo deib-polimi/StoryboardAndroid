@@ -68,6 +68,11 @@ public class AttributeInspectorManager {
                     intentInspectorsList.getChildren().add(i.getIntentInspector());
                     intentInspectorsList.getChildren().add(new Separator());
                 }
+                if(activity.getIngoingIntentsForType(IntentType.forResult).size()==1){
+                    ButtonClickWithResultIntent i =(ButtonClickWithResultIntent) activity.getIngoingIntentsForType(IntentType.forResult).get(0);
+                    intentInspectorsList.getChildren().add(i.getResultInspector());
+                    intentInspectorsList.getChildren().add(new Separator());
+                }
                 intentTab.setContent(intentInspectorsList);
 
             }else{
@@ -151,7 +156,14 @@ public class AttributeInspectorManager {
             tabIntentList.getChildren().add(new Label("Content: "+intent.getBelongingLink().getTarget().getName()));
             tabIntentList.getChildren().add(intentInspector);
             intentTab.setContent(tabIntentList);
-        }else{
+        }else if (intent.getType() == IntentType.forResult){
+            VBox list = new VBox();
+            list.getChildren().add(intentInspector);
+            list.getChildren().add(new Separator());
+            list.getChildren().add(((ButtonClickWithResultIntent)intent).getResultInspector());
+            intentTab.setContent(list);
+        }
+        else{
             intentTab.setContent(intentInspector);
         }
 

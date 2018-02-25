@@ -69,7 +69,6 @@ public class TabIntentAttributes extends IntentAttributes {
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 if(oldValue!=newValue && newValue.intValue()!=(-1) && oldValue.intValue()!=(-1)){
                     container.changeOrder(oldValue.intValue(),newValue.intValue());
-                    System.out.println("change order: "+tab_text.getText()+" from "+oldValue+" to "+newValue);
                 }
             }
         });

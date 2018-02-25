@@ -20,6 +20,6 @@ public class ${ACTIVITY_NAME} extends AppCompatActivity {
         ${INTENT_RECEIVER}
         ${SET_VIEWS}
         ${BUTTON_CLICK_INTENT}${UP_NAVIGATION}
-    }
+    }${ON_RESULT}
 
 }

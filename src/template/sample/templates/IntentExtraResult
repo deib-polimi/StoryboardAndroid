@@ -1,0 +1,1 @@
+${TYPE_VAR} result = data.get${TYPE_GET}Extra(${SOURCE}.EXTRA_MESSAGE_RESULT${DEF_VALUE});

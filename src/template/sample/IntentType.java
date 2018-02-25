@@ -10,5 +10,6 @@ public enum IntentType {
     tabIntent,
     bottomNavigIntent,
     itemClick,
-    cardClick
+    cardClick,
+    forResult
 }

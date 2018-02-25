@@ -14,6 +14,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
+import javafx.scene.shape.Polygon;
 import template.managers.AttributeInspectorManager;
 import template.managers.StructureTreeManager;
 
@@ -56,6 +57,8 @@ public class Link extends AnchorPane {
     private final DoubleProperty mLinkAnchorYTarget = new SimpleDoubleProperty();
     private final DoubleProperty mCurveOrientationX = new SimpleDoubleProperty();
     private final DoubleProperty mCurveOrientationY = new SimpleDoubleProperty();
+
+    //private boolean isReverse = false;
 
 
     public Link() {
@@ -150,6 +153,20 @@ public class Link extends AnchorPane {
         );
 
     }
+
+    /*public boolean isReverse() {
+        return isReverse;
+    }
+
+    public void setReverse(boolean reverse) {
+        isReverse = reverse;
+        arrow.setVisible(!reverse);
+        if (reverse == false){
+            for (Intent i :getIntentsList()){
+                i.showArrow(false);
+            }
+        }
+    }*/
 
     public void setStart(Point2D startPoint) {
 
@@ -269,6 +286,7 @@ public class Link extends AnchorPane {
         bindIntent(intent);
         updateArrow();
         arrow.setVisible(true);
+        //arrow.setVisible(!isReverse);
 
     }
 
@@ -277,8 +295,12 @@ public class Link extends AnchorPane {
         intentsList.add(intent);
         intent.setBelongingLink(this);
         intent.update();
-
+        /*intent.setArrow();
+        if(isReverse){
+            intent.showArrow(true);
+        }*/
     }
+
 
     public void updateArrow (){
 
@@ -294,23 +316,45 @@ public class Link extends AnchorPane {
     public void addIntent(Intent intent){
         intentsList.add(intent);
         intent.setBelongingLink(this);
+        //intent.setArrow();
+        /*if (isReverse){
+            intent.showArrow(true);
+        }*/
         intentsRepositioning();
+
         SelectedItem selectedItem = SelectedItem.getInstance();
         if(selectedItem.getSelectedItem()==this){
             intent.select();
         }
         updateIntents();
+
     }
 
     //in seguito all'inserimento di un nuovo intent riposiziono le icone degli intent sul link
     public void intentsRepositioning(){
-        float size = intentsList.size();
-        float increment = 1/(size+1);
-        float position = increment;
-        for (Intent i : intentsList){
-            i.changePosition(position);
-            position+=increment;
+        /*if (linkAlreadyExist(target,source)!=null){
+            Link reverseLink = linkAlreadyExist(target,source);
+            float size = intentsList.size() + reverseLink.getIntentsList().size();
+            float increment = 1/(size+1);
+            float position = increment;
+            List<Intent> unifiedList = intentsList;
+            for(Intent i : reverseLink.getIntentsList()){
+                unifiedList.add(i);
+            }
+            for (Intent i : unifiedList){
+                i.changePosition(position);
+                position+=increment;
+            }
+        }else {*/
+            float size = intentsList.size();
+            float increment = 1/(size+1);
+            float position = increment;
+            for (Intent i : intentsList){
+                i.changePosition(position);
+                position+=increment;
+            }
         }
+
         /*if (size%2 ==0){//pari
             int i = 0;
             float distanceRate = 2;
@@ -332,7 +376,7 @@ public class Link extends AnchorPane {
             }
         }*/
 
-    }
+
 
     public DraggableActivity getSource() {
         return source;
@@ -362,6 +406,11 @@ public class Link extends AnchorPane {
             intentsList.remove(0);
             intent.delete();
         }
+        //if there is a reverse link, switch it to direct
+        /*if (linkAlreadyExist(target,source)!=null && isReverse()==false){
+            linkAlreadyExist(target,source).setReverse(false);
+        }*/
+
         //remove link from graph
         AnchorPane parent  = (AnchorPane) this.getParent();
         parent.getChildren().remove(this);
@@ -429,5 +478,14 @@ public class Link extends AnchorPane {
         for (Intent i : intentsList) {
             i.deselect();
         }
+    }
+
+    private Link linkAlreadyExist(DraggableActivity source,DraggableActivity target){
+        for(Link l : source.getAnchoredLinks()){
+            if (l.getTarget().equals(target)){
+                return l;
+            }
+        }
+        return null;
     }
 }

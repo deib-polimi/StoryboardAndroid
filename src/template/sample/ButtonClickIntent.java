@@ -21,8 +21,10 @@ public class ButtonClickIntent extends Intent {
     private String classTemplate;
     private String layoutTemplate;
     private String extraTemplate;
+    //private String intentForResultTemplate;
     private String extraReceiverTemplate;
     private String extraType;
+    //private boolean forResult;
 
     public ButtonClickIntent(CubicCurve curve, float t, double radius, IntentType type) throws IOException {
         super(curve, t, radius, type);
@@ -31,14 +33,24 @@ public class ButtonClickIntent extends Intent {
         super.setName("newIntent");
         buttonId = "newButton";
         extraType = "None";
+        //forResult = false;
         buttonText="";
         classTemplate = codeGenerator.provideTemplateForName("templates/ButtonClickTemplate");
         layoutTemplate = codeGenerator.provideTemplateForName("templates/ButtonLayoutTemplate");
         extraTemplate =codeGenerator.provideTemplateForName("templates/IntentExtra");
         extraReceiverTemplate =codeGenerator.provideTemplateForName("templates/IntentExtraReceiver");
+        //intentForResultTemplate =codeGenerator.provideTemplateForName("templates/ButtonClickForResultTemplate");
 
         intentInspector.createListeners(this);
     }
+
+    /*public boolean isForResult() {
+        return forResult;
+    }
+
+    public void setForResult(boolean forResult) {
+        this.forResult = forResult;
+    }*/
 
     @Override
     public String getExtraType() {
@@ -78,6 +90,7 @@ public class ButtonClickIntent extends Intent {
     }
     public String getIntentCode(){
         String template = classTemplate;
+
         template = template.replace("${BUTTON_ID}",buttonId);
         //template = template.replace("${INTENT_ID}",super.getName());
         template = template.replace("${DESTINATION_ACTIVITY}",super.getBelongingLink().getTarget().getName());
@@ -126,6 +139,7 @@ public class ButtonClickIntent extends Intent {
         return template;
 
     }
+
     public String getIntentLayoutCode(){
         String template = layoutTemplate;
         template = template.replace("${BUTTON_ID}",buttonId+"_button");
@@ -146,4 +160,5 @@ public class ButtonClickIntent extends Intent {
     private String getExtraId(){
         return "EXTRA_MESSAGE"+Integer.toString(getExtraIndex());
     }
+
 }

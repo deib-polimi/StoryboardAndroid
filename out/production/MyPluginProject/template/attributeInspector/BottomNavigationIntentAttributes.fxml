@@ -19,12 +19,12 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
-        <Label text="Tab text" GridPane.halignment="RIGHT">
+        <Label text="Item text" GridPane.halignment="RIGHT">
             <padding>
                 <Insets right="20.0" />
             </padding>
         </Label>
-        <Label text="Tab order" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+        <Label text="Item order" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
             <GridPane.margin>
                 <Insets right="20.0" />
             </GridPane.margin>

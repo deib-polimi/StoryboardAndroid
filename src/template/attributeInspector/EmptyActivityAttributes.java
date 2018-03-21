@@ -7,15 +7,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import template.sample.DraggableActivity;
-import template.sample.EmptyActivity;
-import template.sample.IsInitialActivity;
+import template.appInterface.DraggableActivity;
+import template.appInterface.IsInitialActivity;
 
 import java.io.IOException;
 
-/**
- * Created by utente on 06/02/2018.
- */
 public class EmptyActivityAttributes extends GridPane{
     @FXML
     private TextField name_txt;

@@ -7,14 +7,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import template.sample.DraggableActivity;
-import template.sample.IsInitialActivity;
+import template.appInterface.DraggableActivity;
+import template.appInterface.IsInitialActivity;
 
 import java.io.IOException;
 
-/**
- * Created by utente on 14/02/2018.
- */
 public class TabbedActivityAttributes extends GridPane {
     @FXML
     private TextField name_txt;

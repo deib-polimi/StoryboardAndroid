@@ -35,7 +35,7 @@
     </action> -->
     <group id="MyPlugin.SampleMenu" text="_Sample Menu2" description="Sample menu" >
       <add-to-group group-id="tasks.toolbar.group" anchor="last"  />
-      <action id="Myplugin.Textboxes" class="template.TextBoxes" text="MyPlugin" description="A test menu item" icon="/icons/erDiagram.png" />
+      <action id="Myplugin.Textboxes" class="template.PluginAction" text="MyPlugin" description="A test menu item" icon="/icons/erDiagram.png" />
     </group>
 
   </actions>

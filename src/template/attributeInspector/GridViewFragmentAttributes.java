@@ -9,15 +9,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import template.sample.DraggableActivity;
-import template.sample.GridViewActivity;
-import template.sample.IsInitialActivity;
+import template.appInterface.DraggableActivity;
+import template.activities.GridViewActivity;
 
 import java.io.IOException;
 
-/**
- * Created by utente on 20/02/2018.
- */
 public class GridViewFragmentAttributes extends GridPane {
     @FXML
     private TextField name_txt;

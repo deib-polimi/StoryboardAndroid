@@ -10,16 +10,11 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
-import template.sample.BottomNavigationActivity;
-import template.sample.BottomNavigationIntent;
-import template.sample.TabIntent;
-import template.sample.TabbedActivity;
+import template.activities.BottomNavigationActivity;
+import template.intent.BottomNavigationIntent;
 
 import java.io.IOException;
 
-/**
- * Created by utente on 17/02/2018.
- */
 public class BottomNavigationIntentAttributes extends IntentAttributes {
     @FXML
     private TextField tab_text;

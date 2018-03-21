@@ -9,13 +9,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import template.sample.*;
+import template.activities.GridViewActivity;
+import template.appInterface.*;
 
 import java.io.IOException;
 
-/**
- * Created by utente on 20/02/2018.
- */
 public class GridViewAttributes extends GridPane {
     @FXML
     private TextField name_txt;

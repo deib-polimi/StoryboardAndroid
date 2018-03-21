@@ -1,0 +1,39 @@
+package ${PACKAGE};
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.${TYPE}LayoutManager;
+import android.support.v7.widget.RecyclerView;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import ${PACKAGE}.adapter.${ACTIVITY_NAME}Model;
+import ${PACKAGE}.adapter.${ACTIVITY_NAME}Adapter;
+${IMPORTS}
+public class ${ACTIVITY_NAME} extends AppCompatActivity {
+    ${INTENT_EXTRA_ID}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.${ACTIVITY_LAYOUT});
+        ${FAB}
+        ${INTENT_RECEIVER}${UP_NAVIGATION}
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+
+        recyclerView.setHasFixedSize(true);
+        ${ON_CLICK}
+        ${TYPE}LayoutManager layoutManager = new ${TYPE}LayoutManager(this${COLUMNS});
+        recyclerView.setLayoutManager(layoutManager);
+
+        List<${ACTIVITY_NAME}Model> cardsList = Collections.
+                synchronizedList(new ArrayList<${ACTIVITY_NAME}Model>());
+        for (int i = 1; i <= 20; i++){
+
+            ${ACTIVITY_NAME}Model card = new ${ACTIVITY_NAME}Model("Title "+Integer.toString(i),"Subtitle "+Integer.toString(i));
+            cardsList.add(card);
+        }
+
+        ${ACTIVITY_NAME}Adapter adapter = new ${ACTIVITY_NAME}Adapter(cardsList);
+        recyclerView.setAdapter(adapter);
+    }
+}

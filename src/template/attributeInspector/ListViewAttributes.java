@@ -10,9 +10,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import template.sample.DraggableActivity;
-import template.sample.IsInitialActivity;
-import template.sample.ListViewActivity;
+import template.appInterface.DraggableActivity;
+import template.appInterface.IsInitialActivity;
+import template.activities.ListViewActivity;
 
 import java.io.IOException;
 

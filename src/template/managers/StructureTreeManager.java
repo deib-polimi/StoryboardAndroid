@@ -4,17 +4,14 @@ import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.AnchorPane;
-import template.sample.DraggableActivity;
-import template.sample.Intent;
-import template.sample.Link;
-import template.sample.TreeItemParameter;
+import template.appInterface.DraggableActivity;
+import template.intent.Intent;
+import template.appInterface.Link;
+import template.appInterface.TreeItemParameter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by utente on 24/01/2018.
- */
 public class StructureTreeManager {
     private static StructureTreeManager instance = null;
     private TreeView<TreeItemParameter> structureTree = null;

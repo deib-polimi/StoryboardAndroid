@@ -8,14 +8,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import template.sample.AdapterViewItemClick;
-import template.sample.CardViewItemClick;
+import template.intent.CardViewItemClick;
 
 import java.io.IOException;
 
-/**
- * Created by utente on 21/02/2018.
- */
 public class CardViewItemClickAttributes extends IntentAttributes {
     @FXML
     private Label type_label;

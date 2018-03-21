@@ -9,14 +9,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import template.sample.ButtonClickIntent;
-import template.sample.ButtonClickWithResultIntent;
+import template.intent.ButtonClickWithResultIntent;
 
 import java.io.IOException;
 
-/**
- * Created by utente on 24/02/2018.
- */
 public class ButtonClickResultAttributes extends IntentAttributes{
     @FXML
     private Label type_label;

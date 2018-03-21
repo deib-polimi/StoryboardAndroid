@@ -9,13 +9,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import template.sample.LoginIntent;
+import template.intent.LoginIntent;
 
 import java.io.IOException;
 
-/**
- * Created by utente on 12/02/2018.
- */
 public class LoginIntentAttributes extends IntentAttributes{
     @FXML
     private Label target_label;

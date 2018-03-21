@@ -7,18 +7,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import template.sample.IntentType;
-import template.sample.TabIntent;
-import template.sample.TabbedActivity;
+import template.intent.TabIntent;
+import template.activities.TabbedActivity;
 
 import java.io.IOException;
-import java.util.List;
 
-/**
- * Created by utente on 14/02/2018.
- */
 public class TabIntentAttributes extends IntentAttributes {
     @FXML
     private TextField tab_text;

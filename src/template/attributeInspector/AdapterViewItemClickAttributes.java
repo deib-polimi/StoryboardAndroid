@@ -8,15 +8,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import template.sample.AdapterViewItemClick;
-import template.sample.ButtonClickIntent;
+import template.intent.AdapterViewItemClick;
 
 import java.io.IOException;
 
-/**
- * Created by utente on 20/02/2018.
- */
 public class AdapterViewItemClickAttributes extends IntentAttributes {
 
     @FXML

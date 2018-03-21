@@ -9,15 +9,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import template.sample.CardViewActivity;
-import template.sample.DraggableActivity;
-import template.sample.IsInitialActivity;
+import template.activities.CardViewActivity;
+import template.appInterface.DraggableActivity;
+import template.appInterface.IsInitialActivity;
 
 import java.io.IOException;
 
-/**
- * Created by utente on 21/02/2018.
- */
 public class CardViewAttributes extends GridPane {
 
     @FXML

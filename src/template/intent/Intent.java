@@ -94,35 +94,35 @@ public class Intent extends Pane {
         switch (type) {
 
             case buttonClick:
-                image= new Image(getClass().getResource("/img/android.jpg").toString());
+                image= new Image(getClass().getResource("/img/buttonIntent.jpg").toString());
                 break;
 
             case fabClick:
-                image= new Image(getClass().getResource("/img/gridview.png").toString());
+                image= new Image(getClass().getResource("/img/fabIntent2.jpg").toString());
                 break;
 
             case loginClick:
-                image= new Image(getClass().getResource("/img/listview.png").toString());
+                image= new Image(getClass().getResource("/img/loginIntent.jpg").toString());
                 break;
 
             case tabIntent:
-                image= new Image(getClass().getResource("/img/listview.png").toString());
+                image= new Image(getClass().getResource("/img/tabIntent.jpg").toString());
                 break;
 
             case bottomNavigIntent:
-                image= new Image(getClass().getResource("/img/listview.png").toString());
+                image= new Image(getClass().getResource("/img/bottomIntent.jpg").toString());
                 break;
 
             case itemClick:
-                image= new Image(getClass().getResource("/img/listview.png").toString());
+                image= new Image(getClass().getResource("/img/listIntent.jpg").toString());
                 break;
 
             case cardClick:
-                image= new Image(getClass().getResource("/img/listview.png").toString());
+                image= new Image(getClass().getResource("/img/cardIntent.jpg").toString());
                 break;
 
             case forResult:
-                image= new Image(getClass().getResource("/img/listview.png").toString());
+                image= new Image(getClass().getResource("/img/responseIntent.jpg").toString());
                 break;
 
         }

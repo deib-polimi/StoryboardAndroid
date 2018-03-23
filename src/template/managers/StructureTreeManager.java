@@ -3,6 +3,8 @@ package template.managers;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import template.appInterface.DraggableActivity;
 import template.intent.Intent;
@@ -69,12 +71,14 @@ public class StructureTreeManager {
 
         TreeItem<TreeItemParameter> parentActivity = searchTreeItemById(source.getId(),rootItem);
         //add link to tree (to source activity node)
-        TreeItem<TreeItemParameter> item = new TreeItem<TreeItemParameter>(new TreeItemParameter("Link to "+target.getName(),link.getId()));
+        TreeItem<TreeItemParameter> item = new TreeItem<TreeItemParameter>(new TreeItemParameter("Link to "+target.getName(),link.getId()),
+                new ImageView(new Image(getClass().getResourceAsStream("/icons/link2.jpg"))));
         parentActivity.getChildren().add(item);
         int intentListSize = link.getIntentsList().size();
         //add intent to parent link
         Intent intent = link.getIntentsList().get(intentListSize-1); //ultimo intent aggiunto si trova in coda alla lista
-        TreeItem<TreeItemParameter> itemIntent = new TreeItem<TreeItemParameter>(new TreeItemParameter(intent.getName(),intent.getId()));
+        TreeItem<TreeItemParameter> itemIntent = new TreeItem<TreeItemParameter>(new TreeItemParameter(intent.getName(),intent.getId()),
+                new ImageView(new Image(getClass().getResourceAsStream("/icons/intent2.jpg"))));
         item.getChildren().add(itemIntent);
     }
 
@@ -83,7 +87,8 @@ public class StructureTreeManager {
         int intentListSize = link.getIntentsList().size();
         //add intent to parent link
         Intent intent = link.getIntentsList().get(intentListSize-1); //ultimo intent aggiunto si trova in coda alla lista
-        TreeItem<TreeItemParameter> itemIntent = new TreeItem<TreeItemParameter>(new TreeItemParameter(intent.getName(),intent.getId()));
+        TreeItem<TreeItemParameter> itemIntent = new TreeItem<TreeItemParameter>(new TreeItemParameter(intent.getName(),intent.getId()),
+                new ImageView(new Image(getClass().getResourceAsStream("/icons/intent2.jpg"))));
         parentLink.getChildren().add(itemIntent);
     }
 
@@ -140,6 +145,5 @@ public class StructureTreeManager {
         }
         return activities;
     }
-
 
 }

@@ -50,7 +50,7 @@ public class DragIcon extends AnchorPane {
         switch (mType) {
 
             case basicActivity:
-                icon_image.setImage(new Image(getClass().getResource("/img/container.png").toString()));
+                icon_image.setImage(new Image(getClass().getResource("/img/basicIcon2.jpg").toString()));
                 break;
 
             case listView:
@@ -62,19 +62,19 @@ public class DragIcon extends AnchorPane {
                 break;
 
             case emptyActivity:
-                icon_image.setImage(new Image(getClass().getResource("/img/container.png").toString()));
+                icon_image.setImage(new Image(getClass().getResource("/img/emptyIcon.jpg").toString()));
                 break;
 
             case loginActivity:
-                icon_image.setImage(new Image(getClass().getResource("/img/gridview.png").toString()));
+                icon_image.setImage(new Image(getClass().getResource("/img/loginIcon.jpg").toString()));
                 break;
 
             case tabbedActivity:
-                icon_image.setImage(new Image(getClass().getResource("/img/gridview.png").toString()));
+                icon_image.setImage(new Image(getClass().getResource("/img/tabbedIcon.jpg").toString()));
                 break;
 
             case bottomNavigationActivity:
-                icon_image.setImage(new Image(getClass().getResource("/img/listview.png").toString()));
+                icon_image.setImage(new Image(getClass().getResource("/img/bottomIcon.jpg").toString()));
                 break;
 
             case cardView:

@@ -162,6 +162,15 @@ public class GraphHandler {
                 }
             }
         }
+        //check if exist an initial activity
+        if (IsInitialActivity.getInstance().getInitialActivity() == null){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("No initial activity selected");
+            alert.setContentText("Select an initial activity");
+            alert.showAndWait();
+            return false;
+        }
 
         return true;
     }

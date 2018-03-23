@@ -10,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -34,7 +36,11 @@ public class DraggableActivity extends AnchorPane{
     @FXML
     private AnchorPane root_pane;
     @FXML
+    private AnchorPane drag_pane;
+    @FXML
     private GridPane header_bar;
+    @FXML
+    private ImageView home;
 
     private DragControllerType mType = null;
 
@@ -84,7 +90,7 @@ public class DraggableActivity extends AnchorPane{
 
         left_link_handle.setOnDragDropped(mLinkHandleDragDropped);
         right_link_handle.setOnDragDropped(mLinkHandleDragDropped);
-        body_pane.setOnDragDropped(mLinkHandleDragDropped);
+        drag_pane.setOnDragDropped(mLinkHandleDragDropped);
 
 
         mDragLink = new Link();
@@ -113,45 +119,49 @@ public class DraggableActivity extends AnchorPane{
 
         getStyleClass().clear();
         getStyleClass().add("dragicon");
-        getStyleClass().add("node-bg-teal");
+        getStyleClass().add("node-bg-white");
         header_bar.getStyleClass().add("node-overlay-teal");
 
-        //getStyleClass().add("node-overlay");
-        /*switch (mType) {
+        switch (mType) {
 
             case gridView:
-                getStyleClass().add("node-bg-teal");
-                header_bar.getStyleClass().add("node-overlay-teal");
-
+                body_pane.getStyleClass().add("activity-gridview");
                 break;
 
             case listView:
-                getStyleClass().add("node-bg-grey");
-                header_bar.getStyleClass().add("node-overlay-grey");
+                body_pane.getStyleClass().add("activity-listview");
                 break;
 
-            case plus:
-                getStyleClass().add("node-bg-cyan");
-                header_bar.getStyleClass().add("node-overlay-cyan");
+            case cardView:
+                body_pane.getStyleClass().add("activity-cardview");
                 break;
 
-            case EmptyActivity:
-                getStyleClass().add("node-bg-blue");
-                header_bar.getStyleClass().add("node-overlay-blue");
+            case emptyActivity:
+
+                break;
+
+            case basicActivity:
+                body_pane.getStyleClass().add("activity-basic");
+                break;
+
+            case tabbedActivity:
+                body_pane.getStyleClass().add("activity-tabbed");
                 break;
 
             case loginActivity:
-                getStyleClass().add("node-bg-pesto");
-                header_bar.getStyleClass().add("node-overlay-pesto");
+                body_pane.getStyleClass().add("activity-login");
                 break;
 
-            case tabBar:
-
+            case bottomNavigationActivity:
+                body_pane.getStyleClass().add("activity-bottomnav");
                 break;
+
+
+
 
             default:
                 break;
-        }*/
+        }
 
     }
 
@@ -200,7 +210,7 @@ public class DraggableActivity extends AnchorPane{
                 getParent().setOnDragOver (mContextDragOver);
                 getParent().setOnDragDropped (mContextDragDropped);
 
-                getStyleClass().add("node-selected");
+                header_bar.getStyleClass().add("node-selected");
 
                 //store the coordinates of the mouse click relative to the upper left corner of the activity
                 mDragOffset = new Point2D(event.getX(), event.getY());
@@ -248,7 +258,7 @@ public class DraggableActivity extends AnchorPane{
                 getParent().setOnDragOver(null);
                 getParent().setOnDragDropped(null);
 
-                getStyleClass().remove("node-selected");
+                header_bar.getStyleClass().remove("node-selected");
 
                 event.setDropCompleted(true);
 
@@ -569,7 +579,13 @@ public class DraggableActivity extends AnchorPane{
         return null;
     }
 
-
+    public void setInitialIcon(boolean isInitial){
+        if(isInitial){
+            home.setImage(new Image(getClass().getResource("/icons/ic_home_white.png").toString()));
+        }else{
+            home.setImage(null);
+        }
+    }
 
 
 

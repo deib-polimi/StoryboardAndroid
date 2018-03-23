@@ -6,6 +6,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -34,6 +36,8 @@ public class RootLayout extends AnchorPane{
     private AnchorPane graph_pane;
     @FXML
     private SplitPane base_pane;
+    @FXML
+    private SplitPane body_pane;
     @FXML
     private TreeView<TreeItemParameter> structure_tree;
     @FXML
@@ -110,6 +114,7 @@ public class RootLayout extends AnchorPane{
                 }
             }
         } );*/
+
         this.setOnKeyPressed(new EventHandler<KeyEvent>()
         {
             @Override
@@ -149,6 +154,8 @@ public class RootLayout extends AnchorPane{
         treeManager.setGraph(graph_pane);
 
         GraphHandler.getInstance().setGraph_pane(graph_pane);
+        structure_tree.getSelectionModel().select(rootItem);
+
     }
 
     private void buildDragHandlers() {
@@ -247,7 +254,8 @@ public class RootLayout extends AnchorPane{
                                 new Point2D(cursorPoint.getX()-19 , cursorPoint.getY()-19)
                         );
 
-                        TreeItem<TreeItemParameter> item = new TreeItem<TreeItemParameter>(new TreeItemParameter(activity.getName(),activity.getId()));
+                        TreeItem<TreeItemParameter> item = new TreeItem<TreeItemParameter>(new TreeItemParameter(activity.getName(),activity.getId()),
+                                new ImageView(new Image(getClass().getResourceAsStream("/icons/ic_activity.jpg"))));
                         rootItem.getChildren().add(item);
                         activity.loadInspectorListeners();
 

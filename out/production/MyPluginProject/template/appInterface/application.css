@@ -13,6 +13,9 @@
 .node-bg-teal{
     -fx-background-color: #B2DFDB;
 }
+.node-bg-white{
+    -fx-background-color: #FFFFFF;
+}
 .node-overlay-teal {
     -fx-background-radius: 5 5 0 0;
     -fx-background-color:
@@ -38,18 +41,18 @@
 .node-selected{
     -fx-background-radius: 5 5 5 5;
     -fx-background-color:
-    rgba(255, 255, 255, 0.35);
+    rgba(0, 150, 136, 0.35);
 }
 .right-link-handle:hover {
     -fx-background-radius: 0 0 5 0;
     -fx-background-color:
-    rgba(255, 255, 255, 0.35);
+    rgba(0, 150, 136, 0.35);
 }
 
 .left-link-handle:hover {
     -fx-background-radius: 0 0 0 5;
     -fx-background-color:
-    rgba(255, 255, 255, 0.35);
+    rgba(0, 150, 136, 0.35);
 }
 .title-label{
     -fx-text-fill: white;
@@ -60,4 +63,56 @@
     -fx-effect: innershadow( three-pass-box , rgba(38, 166, 154, 1) , 6, 0.0 , 0 , 2 );
     -fx-font-weight: bold;
     -fx-font-size:25;
+}
+.graph-pane{
+    -fx-background-image: url("../../img/graph2.png");
+}
+.activity-tabbed{
+    -fx-background-radius: 0 0 5 5;
+    -fx-border-radius: 0 0 5 5;
+    -fx-background-image: url("../../img/tabbed.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: top center;
+}
+.activity-basic{
+    -fx-background-radius: 0 0 5 5;
+    -fx-border-radius: 0 0 5 5;
+    -fx-background-image: url("../../img/basic.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: top center;
+}
+.activity-bottomnav{
+    -fx-background-radius: 0 0 5 5;
+    -fx-border-radius: 0 0 5 5;
+    -fx-background-image: url("../../img/bottomnavigation.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: top center;
+}
+.activity-login{
+    -fx-background-radius: 0 0 5 5;
+    -fx-border-radius: 0 0 5 5;
+    -fx-background-image: url("../../img/login.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: top center;
+}
+.activity-listview{
+    -fx-background-radius: 0 0 5 5;
+    -fx-border-radius: 0 0 5 5;
+    -fx-background-image: url("../../img/listview.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: top center;
+}
+.activity-gridview{
+    -fx-background-radius: 0 0 5 5;
+    -fx-border-radius: 0 0 5 5;
+    -fx-background-image: url("../../img/gridview.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: top center;
+}
+.activity-cardview{
+    -fx-background-radius: 0 0 5 5;
+    -fx-border-radius: 0 0 5 5;
+    -fx-background-image: url("../../img/cardview2.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: top center;
 }

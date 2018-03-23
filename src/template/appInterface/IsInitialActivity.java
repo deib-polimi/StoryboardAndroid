@@ -13,7 +13,9 @@ public class IsInitialActivity {
     }
 
     public void setInitialActivity(DraggableActivity initialActivity) {
+
         this.initialActivity = initialActivity;
+        initialActivity.setInitialIcon(true);
     }
 
     public DraggableActivity getInitialActivity() {
@@ -27,6 +29,9 @@ public class IsInitialActivity {
         return false;
     }
     public void deselectInitialActivity(){
+
+        initialActivity.setInitialIcon(false);
         initialActivity = null;
+
     }
 }

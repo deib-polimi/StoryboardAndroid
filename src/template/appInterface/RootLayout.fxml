@@ -9,14 +9,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root fx:id="root_pane" minHeight="650.0" minWidth="1150.0" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="root_pane" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <SplitPane fx:id="base_pane" dividerPositions="0.5, 0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <items>
-            <SplitPane dividerPositions="0.5" maxWidth="-Infinity" orientation="VERTICAL" prefHeight="200.0" prefWidth="250.0">
+            <SplitPane dividerPositions="0.5" maxWidth="-Infinity" minWidth="250.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="250.0">
               <items>
-                  <TreeView fx:id="structure_tree" onMouseClicked="#treeItemMouseClick" prefHeight="200.0" prefWidth="200.0" />
-                  <ScrollPane hbarPolicy="NEVER" prefHeight="321.0" prefWidth="238.0">
+                  <TreeView fx:id="structure_tree" maxHeight="550.0" minHeight="150.0" minWidth="200.0" onMouseClicked="#treeItemMouseClick" prefHeight="200.0" prefWidth="200.0" />
+                  <ScrollPane hbarPolicy="NEVER" minWidth="238.0" prefHeight="321.0" prefWidth="238.0">
                      <content>
                         <GridPane fx:id="controllers_grid" hgap="4.0" vgap="4.0">
                           <columnConstraints>
@@ -31,16 +31,17 @@
                   </ScrollPane>
               </items>
             </SplitPane>
-            <AnchorPane fx:id="graph_pane" onMouseClicked="#clearSelections" prefHeight="200.0" prefWidth="200.0">
-               <children>
-                  <Button fx:id="generate_button" mnemonicParsing="false" onAction="#generateCode" text="Generate Code" />
-               </children>
-            </AnchorPane>
-            <AnchorPane fx:id="attribute_inspector_pane" maxWidth="-Infinity" prefHeight="200.0" prefWidth="250.0">
+            <ScrollPane prefHeight="200.0" prefWidth="200.0">
+               <content>
+                  <AnchorPane fx:id="graph_pane" onMouseClicked="#clearSelections" prefHeight="1000.0" prefWidth="1000.0" styleClass="graph-pane" stylesheets="@application.css" />
+               </content>
+            </ScrollPane>
+            <AnchorPane fx:id="attribute_inspector_pane" maxWidth="-Infinity" minWidth="250.0" prefHeight="200.0" prefWidth="250.0">
                <children>
                   <TabPane fx:id="attribute_inspector" prefHeight="548.0" prefWidth="250.0" tabClosingPolicy="UNAVAILABLE" />
                </children></AnchorPane>
          </items>
       </SplitPane>
+      <Button fx:id="generate_button" maxHeight="40.0" maxWidth="120.0" minHeight="40.0" minWidth="120.0" mnemonicParsing="false" onAction="#generateCode" prefHeight="40.0" prefWidth="120.0" text="Generate Code" AnchorPane.leftAnchor="257.0" AnchorPane.topAnchor="0.0" />
    </children>
 </fx:root>

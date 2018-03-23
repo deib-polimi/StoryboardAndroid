@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -8,7 +9,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<fx:root fx:id="root_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="110.0" styleClass="dragicon" stylesheets="@../appInterface/application.css" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="root_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="130.0" styleClass="dragicon" stylesheets="@../appInterface/application.css" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
@@ -21,24 +22,21 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Label fx:id="close_button" alignment="TOP_RIGHT" textAlignment="RIGHT" GridPane.columnIndex="1">
-                            <padding>
-                                <Insets right="10.0" />
-                            </padding>
-                        </Label>
+                  <ImageView fx:id="home" fitHeight="18.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+                     <GridPane.margin>
+                        <Insets right="2.0" />
+                     </GridPane.margin>
+                  </ImageView>
                         <Label fx:id="title_label" styleClass="title-label" text="Label" />
                     </children>
                 </GridPane>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <AnchorPane fx:id="body_pane" maxWidth="130.0" minWidth="129.0" onMouseClicked="#mouseClickOnActivityBody" prefHeight="131.0" prefWidth="129.0">
                <children>
-                  <AnchorPane fx:id="left_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="101.0" prefWidth="20.0" styleClass="left-link-handle" />
-                  <AnchorPane fx:id="body_pane" onMouseClicked="#mouseClickOnActivityBody" prefHeight="100.0" prefWidth="85.0">
-                     <children>
-                        <Label fx:id="type_label" layoutX="10.0" layoutY="25.0" styleClass="activity-type-label" text="Label" />
-                     </children></AnchorPane>
-                  <AnchorPane fx:id="right_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="101.0" prefWidth="20.0" styleClass="right-link-handle" />
+                  <AnchorPane fx:id="left_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="131.0" prefWidth="20.0" styleClass="left-link-handle" />
+                  <AnchorPane fx:id="drag_pane" layoutX="20.0" maxWidth="90.0" minWidth="90.0" prefHeight="131.0" prefWidth="90.0" />
+                  <AnchorPane fx:id="right_link_handle" layoutX="110.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="132.0" prefWidth="20.0" styleClass="right-link-handle" />
                </children>
-            </HBox>
+            </AnchorPane>
             </children>
         </VBox>
     </children>

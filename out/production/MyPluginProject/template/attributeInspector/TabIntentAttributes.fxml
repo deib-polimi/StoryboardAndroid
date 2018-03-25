@@ -28,7 +28,10 @@
                 <Insets right="20.0" />
             </GridPane.margin>
         </Label>
-      <TextField fx:id="tab_text" GridPane.columnIndex="1" />
+      <TextField fx:id="tab_text" GridPane.columnIndex="1">
+         <GridPane.margin>
+            <Insets right="20.0" />
+         </GridPane.margin></TextField>
       <ChoiceBox fx:id="choice_box_order" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
     </children>
 </fx:root>

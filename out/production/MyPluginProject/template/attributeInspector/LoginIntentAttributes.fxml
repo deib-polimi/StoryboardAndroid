@@ -42,7 +42,7 @@
                 <Insets right="20.0" />
             </GridPane.margin>
         </Label>
-      <Label text="Extra" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+      <Label text="Extras" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
          <GridPane.margin>
             <Insets right="20.0" />
          </GridPane.margin>

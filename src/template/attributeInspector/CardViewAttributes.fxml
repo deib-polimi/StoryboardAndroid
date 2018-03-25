@@ -35,7 +35,10 @@
                 <Insets right="20.0" />
             </GridPane.margin>
         </Label>
-        <ChoiceBox fx:id="layout_type_box" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <ChoiceBox fx:id="layout_type_box" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets right="20.0" />
+         </GridPane.margin></ChoiceBox>
         <Label fx:id="columns_label" text="Columns" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
             <GridPane.margin>
                 <Insets right="20.0" />

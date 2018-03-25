@@ -11,7 +11,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.CubicCurve;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import template.activities.*;
 import template.codeGenerator.CodeGenerator;
 import template.intent.*;
@@ -30,7 +35,7 @@ import java.util.List;
 public class RootLayout extends AnchorPane{
 
     @FXML
-    private GridPane controllers_grid;
+    private VBox choice_menu;
 
     @FXML
     private AnchorPane graph_pane;
@@ -80,20 +85,37 @@ public class RootLayout extends AnchorPane{
         mDragOverIcon.setOpacity(0.65);
         getChildren().add(mDragOverIcon);
 
-        //inserisco icone nel controllers pane
+        //inserisco icone nel choice menu
         int length = DragControllerType.values().length;
         int c = 0;
         int r = 0;
         DragIcon[] icons = new DragIcon[length];
+        String[] titles = {"Empty Activity", "Basic Activity", "Login Activity","Tabbed Activity","Bottom Navigation Activity", "List View",
+        "Grid View", "Card View"};
+        String[] descriptions = {"Empty screen used to build \nyour activity from scratch",
+                "Empty screen with a Floating \nAction Button",
+                "Login screen with email \nand password fields and a \nsign-in button",
+                "Screen with multiple sections \ngrouped in a Tab Layout",
+                "Screen with multiple sections \naccessible by a Bottom \nNavigation Bar",
+                "Screen that display a list \nof scrollable items",
+                "Screen that display a grid \nof scrollable items",
+                "Screen that display a list or \na grid of Card elements"};
         for (int i = 0; i <length; i++) {
 
             DragIcon icn = new DragIcon();
             addDragDetection(icn);
             icn.setType(DragControllerType.values()[i]);
-            controllers_grid.add(icn,0,i);
-            controllers_grid.add(new Label(icn.getType().toString()),1,i);
-
-
+            VBox vBox = new VBox();
+            Text title = new Text(titles[i]);
+            title.setFont(Font.font(null, FontWeight.BOLD, 12));
+            vBox.getChildren().add(title);
+            vBox.getChildren().add(new Text(descriptions[i]));
+            vBox.setSpacing(5);
+            HBox hBox = new HBox();
+            hBox.getChildren().addAll(icn,vBox);
+            hBox.setSpacing(7);
+            choice_menu.getChildren().add(hBox);
+            choice_menu.setSpacing(10);
 
         }
         /*structure_tree.setOnKeyPressed( new EventHandler<KeyEvent>()

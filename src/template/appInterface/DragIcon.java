@@ -54,11 +54,11 @@ public class DragIcon extends AnchorPane {
                 break;
 
             case listView:
-                icon_image.setImage(new Image(getClass().getResource("/img/gridview.png").toString()));
+                icon_image.setImage(new Image(getClass().getResource("/img/listIcon.jpg").toString()));
                 break;
 
             case gridView:
-                icon_image.setImage(new Image(getClass().getResource("/img/listview.png").toString()));
+                icon_image.setImage(new Image(getClass().getResource("/img/gridIcon.jpg").toString()));
                 break;
 
             case emptyActivity:
@@ -78,7 +78,7 @@ public class DragIcon extends AnchorPane {
                 break;
 
             case cardView:
-                icon_image.setImage(new Image(getClass().getResource("/img/listview.png").toString()));
+                icon_image.setImage(new Image(getClass().getResource("/img/cardIcon.jpg").toString()));
                 break;
 
             default:

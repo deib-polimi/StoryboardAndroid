@@ -361,12 +361,12 @@ public class Link extends AnchorPane {
     }
 
     public void select(){
-        int depth = 15;
+        int depth = 25;
 
         DropShadow borderGlow= new DropShadow();
         borderGlow.setOffsetY(0f);
         borderGlow.setOffsetX(0f);
-        borderGlow.setColor(Color.BLUE);
+        borderGlow.setColor(Color.AQUA);
         borderGlow.setWidth(depth);
         borderGlow.setHeight(depth);
         //borderGlow.setBlurType(BlurType.THREE_PASS_BOX);

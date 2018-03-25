@@ -32,6 +32,9 @@
                 <Insets right="20.0" />
             </GridPane.margin>
         </Label>
-        <ChoiceBox fx:id="adapter_type_box" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <ChoiceBox fx:id="adapter_type_box" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets right="20.0" />
+         </GridPane.margin></ChoiceBox>
     </children>
 </fx:root>

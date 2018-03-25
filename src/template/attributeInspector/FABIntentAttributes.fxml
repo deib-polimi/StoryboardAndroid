@@ -31,7 +31,7 @@
             </padding>
         </Label>
         <Label fx:id="target_label" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <Label text="Extra" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+      <Label text="Extras" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
          <GridPane.margin>
             <Insets right="20.0" />
          </GridPane.margin>

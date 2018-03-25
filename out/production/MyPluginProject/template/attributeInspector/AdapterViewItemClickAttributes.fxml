@@ -24,7 +24,7 @@
             </GridPane.margin>
         </Label>
         <Label fx:id="type_label" text="Label" GridPane.columnIndex="1" />
-      <Label text="Extra" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+      <Label text="Extras" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
          <GridPane.margin>
             <Insets right="20.0" />
          </GridPane.margin>

@@ -65,7 +65,7 @@
     -fx-font-size:25;
 }
 .graph-pane{
-    -fx-background-image: url("../../img/graph2.png");
+    -fx-background-image: url("../../img/graph.jpg");
 }
 .activity-tabbed{
     -fx-background-radius: 0 0 5 5;

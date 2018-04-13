@@ -17,33 +17,34 @@ import java.util.List;
 import java.util.Scanner;
 
 public class CodeGenerator {
-    private String javaOverwritedPath = ProjectHandler.getInstance().getProjectPath()+"/app/src/main/java/overwrited";
-    private String layoutOverwritedPath = ProjectHandler.getInstance().getProjectPath()+"/app/src/main/res/overwrited";
+    //private String javaOverwritedPath = ProjectHandler.getInstance().getProjectPath()+"/app/src/main/java/overwrited";
+    //private String layoutOverwritedPath = ProjectHandler.getInstance().getProjectPath()+"/app/src/main/res/overwrited";
+    private String overwritedPath = ProjectHandler.getInstance().getProjectPath()+"/app/src/main/overwrited";
 
     public CodeGenerator() {
     }
 
     private void copyJavaClass(String filename ,File sourceFile){
-        File f = new File (javaOverwritedPath);
+        File f = new File (overwritedPath);
         if (!f.exists()){
             //create a folder that will contains overwrited java files
             f.mkdirs();
         }
-        f= new File(javaOverwritedPath+"/"+filename+".java");
+        f= new File(overwritedPath+"/"+filename+".java");
         f.delete();
         //create a copy of the file
-        sourceFile.renameTo(new File(javaOverwritedPath+"/"+filename+".java"));
+        sourceFile.renameTo(new File(overwritedPath+"/"+filename+".java"));
     }
     private void copyLayoutClass(String filename, File sourceFile){
-        File f = new File (layoutOverwritedPath);
+        File f = new File (overwritedPath);
         if (!f.exists()){
             //create a folder that will contains overwrited xml files
             f.mkdirs();
         }
-        f= new File(layoutOverwritedPath+"/"+filename+".xml");
+        f= new File(overwritedPath+"/"+filename+".xml");
         f.delete();
         //create a copy of the file
-        sourceFile.renameTo(new File(layoutOverwritedPath+"/"+filename+".xml"));
+        sourceFile.renameTo(new File(overwritedPath+"/"+filename+".xml"));
     }
 
     public void generateCode(DraggableActivity activity) throws IOException {

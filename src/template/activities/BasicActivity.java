@@ -79,7 +79,8 @@ public class BasicActivity extends DraggableActivity {
         //create code of the button click intents outgoing from the activity
 
         if((super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0)||(super.getOutgoingIntentsForType(IntentType.fabClick).size()>0)||
-                super.getOutgoingIntentsForType(IntentType.forResult).size()>0){
+                super.getOutgoingIntentsForType(IntentType.forResult).size()>0 ||
+                super.getIngoingIntentsForType(IntentType.forResult).size()>0){
             imports = imports.concat(Imports.INTENT+"\n");
         }
         if (super.getOutgoingIntentsForType(IntentType.buttonClick).size()>0 ||

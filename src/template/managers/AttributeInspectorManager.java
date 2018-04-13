@@ -129,7 +129,8 @@ public class AttributeInspectorManager {
         Tab linkTab = new Tab ("intents");
         //populate tabs
         VBox intentInspectorsList = new VBox();
-        intentInspectorsList.getChildren().add(new Label(link.getSource().getName()+" --> "+link.getTarget().getName()));
+        intentInspectorsList.getChildren().add(new Label(""));
+        intentInspectorsList.getChildren().add(new Label("    "+link.getSource().getName()+" --> "+link.getTarget().getName()));
         for(Intent i : link.getIntentsList()){
             intentInspectorsList.getChildren().add(i.getIntentInspector());
             intentInspectorsList.getChildren().add(new Separator());

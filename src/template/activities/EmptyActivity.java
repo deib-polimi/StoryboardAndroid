@@ -126,7 +126,7 @@ public class EmptyActivity extends DraggableActivity {
 
         }
         if(!results.equals("")){
-            template = template.replace("${ON_RESULT}","\n"+codeGenerator.provideTemplateForName("templates/ButtonClickOnResult"));
+            template = template.replace("${ON_RESULT}","\n"+codeGenerator.provideTemplateForName("templates/activityTemplates/ButtonClickOnResult"));
             template = template.replace("${VISIBILITY}","protected");
 
             template = template.replace("${RESULTS}",results);
